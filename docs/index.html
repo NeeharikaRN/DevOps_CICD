@@ -1,133 +1,215 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>My Food Blog</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">
-<style>
-body,h1,h2,h3,h4,h5,h6 {font-family: "Karma", sans-serif}
-.w3-bar-block .w3-bar-item {padding:20px}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pomodoro Timer changed</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f5f4f0; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    :root {
+      --red: #D85A30; --red-light: #FAECE7; --red-dark: #993C1D;
+      --teal: #1D9E75; --amber: #BA7517;
+      --text-primary: #1a1a18; --text-secondary: #888780;
+      --border: rgba(0,0,0,0.12); --bg: #fff; --bg-secondary: #f5f4f0;
+    }
+    #app { font-family: 'DM Mono', monospace; padding: 2.5rem 2rem; max-width: 480px; width: 100%; background: var(--bg); border-radius: 20px; box-shadow: 0 4px 40px rgba(0,0,0,0.08); }
+    .mode-tabs { display: flex; gap: 6px; justify-content: center; margin-bottom: 2rem; }
+    .tab { font-size: 12px; font-family: 'DM Mono', monospace; padding: 6px 14px; border-radius: 99px; border: 0.5px solid var(--border); background: transparent; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; }
+    .tab.active { background: var(--red); color: #fff; border-color: var(--red); }
+    .tab:hover:not(.active) { background: var(--bg-secondary); }
+    .timer-ring { position: relative; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; width: 240px; height: 240px; }
+    .ring-svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+    .ring-bg { fill: none; stroke: #e0ddd6; stroke-width: 6; }
+    .ring-progress { fill: none; stroke: var(--red); stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.4s; }
+    .timer-display { text-align: center; z-index: 1; }
+    .time-label { font-family: 'DM Serif Display', serif; font-size: 56px; color: var(--text-primary); letter-spacing: -2px; line-height: 1; }
+    .mode-label { font-size: 11px; color: var(--text-secondary); margin-top: 6px; letter-spacing: 2px; text-transform: uppercase; }
+    .controls { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 2rem; }
+    .btn-main { width: 56px; height: 56px; border-radius: 50%; border: none; background: var(--red); color: #fff; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.15s, background 0.2s; }
+    .btn-main:hover { transform: scale(1.06); background: var(--red-dark); }
+    .btn-main:active { transform: scale(0.96); }
+    .btn-icon { width: 40px; height: 40px; border-radius: 50%; border: 0.5px solid var(--border); background: transparent; color: var(--text-secondary); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+    .btn-icon:hover { background: var(--bg-secondary); }
+    .sessions { display: flex; justify-content: center; gap: 8px; margin-bottom: 2rem; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #d3d1c7; transition: background 0.3s; }
+    .dot.done { background: var(--red); }
+    .notification { font-size: 12px; text-align: center; color: var(--text-secondary); min-height: 18px; margin-bottom: 12px; }
+    .task-area { border: 0.5px solid var(--border); border-radius: 12px; padding: 1rem 1.25rem; background: var(--bg); }
+    .task-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 10px; }
+    .task-input { width: 100%; border: none; background: transparent; font-family: 'DM Mono', monospace; font-size: 14px; color: var(--text-primary); outline: none; }
+    .task-input::placeholder { color: var(--text-secondary); }
+    .divider { border: none; border-top: 0.5px solid var(--border); margin: 10px 0; }
+    .stats-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); }
+    .stat-val { color: var(--text-primary); font-weight: 500; }
+    .sound-toggle { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); cursor: pointer; background: none; border: none; font-family: inherit; margin: 1rem auto 0; }
+    .sound-toggle .indicator { width: 28px; height: 16px; border-radius: 99px; background: #d3d1c7; position: relative; transition: background 0.2s; }
+    .sound-toggle.on .indicator { background: var(--teal); }
+    .sound-toggle .knob { position: absolute; width: 12px; height: 12px; border-radius: 50%; background: #fff; top: 2px; left: 2px; transition: left 0.2s; }
+    .sound-toggle.on .knob { left: 14px; }
+    .break-accent .ring-progress { stroke: var(--teal); }
+    .break-accent .btn-main { background: var(--teal); }
+    .break-accent .btn-main:hover { background: #0F6E56; }
+    .long-accent .ring-progress { stroke: var(--amber); }
+    .long-accent .btn-main { background: var(--amber); }
+    .long-accent .btn-main:hover { background: #854F0B; }
+  </style>
 </head>
 <body>
-
-<!-- Sidebar (hidden by default) -->
-<nav class="w3-sidebar w3-bar-block w3-card w3-top w3-xlarge w3-animate-left" style="display:none;z-index:2;width:40%;min-width:300px" id="mySidebar">
-  <a href="javascript:void(0)" onclick="w3_close()"
-  class="w3-bar-item w3-button">Close Menu</a>
-  <a href="#food" onclick="w3_close()" class="w3-bar-item w3-button">Food</a>
-  <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button">About</a>
-</nav>
-
-<!-- Top menu -->
-<div class="w3-top">
-  <div class="w3-white w3-xlarge" style="max-width:1200px;margin:auto">
-    <div class="w3-button w3-padding-16 w3-left" onclick="w3_open()">☰</div>
-    <div class="w3-right w3-padding-16">Mail</div>
-    <div class="w3-center w3-padding-16">My Food</div>
+<div id="app">
+  <div class="mode-tabs">
+    <button class="tab active" onclick="setMode('focus')">Focus</button>
+    <button class="tab" onclick="setMode('short')">Short break</button>
+    <button class="tab" onclick="setMode('long')">Long break</button>
   </div>
-</div>
-  
-<!-- !PAGE CONTENT! -->
-<div class="w3-main w3-content w3-padding" style="max-width:1200px;margin-top:100px">
 
-  <!-- First Photo Grid-->
-  <div class="w3-row-padding w3-padding-16 w3-center" id="food">
-    <div class="w3-quarter">
-      <img src="https://vaya.in/recipes/wp-content/uploads/2018/06/Club-sandwich.jpg" alt="Sandwich" style="width:100%">
-      <h3>The Perfect Sandwich, A Real NYC Classic</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/53BGPNAB6YI63C7LFNHEQGYVAA.jpg" alt="Steak" style="width:100%">
-      <h3>Let Me Tell You About This Steak</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://blog.lexmed.com/images/librariesprovider80/blog-post-featured-images/shutterstock_1933299218.jpg?sfvrsn=4a8d900b_0" alt="Cherries" style="width:100%">
-      <h3>Cherries, interrupted</h3>
-      <p>What else?</p>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://www.acouplecooks.com/wp-content/uploads/2023/01/Red-Sauce-Pasta-008.jpg" alt="Pasta and Wine" style="width:100%">
-      <h3>Once Again, Robust Wine and Vegetable Pasta</h3>
-    </div>
-  </div>
-  
-  <!-- Second Photo Grid-->
-  <div class="w3-row-padding w3-padding-16 w3-center">
-    <div class="w3-quarter">
-      <img src="https://feelgoodfoodie.net/wp-content/uploads/2022/04/How-to-Make-Popsicles-15.jpg" alt="Popsicle" style="width:100%">
-      <h3>All I Need Is a Popsicle</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://www.wholesomeyum.com/wp-content/uploads/2021/07/wholesomeyum-Pan-Seared-Salmon-12.jpg" alt="Salmon" style="width:100%">
-      <h3>Salmon For Your Skin</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Desserts.jpg/640px-Desserts.jpg" alt="Sandwich" style="width:100%">
-      <h3>The Perfect Dessert</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://www.simplejoy.com/wp-content/uploads/2021/04/Croissant-French-Toast-5.jpg" alt="Croissant" style="width:100%">
-      <h3>Le French</h3>
+  <div class="timer-ring" id="timerRing">
+    <svg class="ring-svg" width="240" height="240" viewBox="0 0 240 240">
+      <circle class="ring-bg" cx="120" cy="120" r="108"/>
+      <circle class="ring-progress" id="ringProgress" cx="120" cy="120" r="108"
+        stroke-dasharray="678.58" stroke-dashoffset="0"/>
+    </svg>
+    <div class="timer-display">
+      <div class="time-label" id="timeLabel">25:00</div>
+      <div class="mode-label" id="modeLabel">Focus</div>
     </div>
   </div>
 
-  <!-- Pagination -->
-  <div class="w3-center w3-padding-32">
-    <div class="w3-bar">
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">«</a>
-      <a href="#" class="w3-bar-item w3-black w3-button">1</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">2</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">3</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">4</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">»</a>
+  <div class="sessions" id="sessionDots"></div>
+  <div class="notification" id="notification"></div>
+
+  <div class="controls">
+    <button class="btn-icon" onclick="skipBack()" title="Restart">&#8635;</button>
+    <button class="btn-main" id="playBtn" onclick="toggleTimer()">&#9654;</button>
+    <button class="btn-icon" onclick="skipForward()" title="Skip">&#8649;</button>
+  </div>
+
+  <div class="task-area">
+    <div class="task-title">Now working on</div>
+    <input class="task-input" type="text" placeholder="What are you focusing on?" id="taskInput" maxlength="80"/>
+    <hr class="divider">
+    <div class="stats-row">
+      <span>Sessions today</span>
+      <span class="stat-val" id="sessionCount">0</span>
     </div>
   </div>
-  
-  <hr id="about">
 
-  <!-- About Section -->
-  <div class="w3-container w3-padding-32 w3-center">  
-    <h3>About Me, The Food Man</h3><br>
-    <img src="https://www.cordonbleu.edu/Files/MediaFile/58300.jpg" alt="Me" class="w3-image" style="display:block;margin:auto" width="800" height="533">
-    <div class="w3-padding-32">
-      <h4><b>I am Who I Am!</b></h4>
-      <h6><i>With Passion For Real, Good Food</i></h6>
-      <p>Just me, myself and I, exploring the universe of unknownment. I have a heart of love and an interest on food blog. I want to share my world with you.</p>
-    </div>
-  </div>
-  <hr>
-  
-  <!-- Footer -->
-  <footer class="w3-row-padding w3-padding-32">
-
-    <div class="w3-third w3-serif">
-      <h3>POPULAR TAGS</h3>
-      <p>
-        <span class="w3-tag w3-black w3-margin-bottom">Travel</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">New York</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Dinner</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Salmon</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">France</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Drinks</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Ideas</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Flavors</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Cuisine</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Chicken</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Dressing</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Fried</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Fish</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Duck</span>
-      </p>
-    </div>
-  </footer>
-
-<!-- End page content -->
+  <button class="sound-toggle on" id="soundBtn" onclick="toggleSound()">
+    <span>Sound</span>
+    <div class="indicator"><div class="knob"></div></div>
+  </button>
 </div>
 
 <script>
-// Script to open and close sidebar
-function w3_open() {
-  document.getElementById("mySidebar").style.display = "block";
-}
- 
-function w3_close() {
-  document.getElementById("mySidebar").style.display = "none";
-}
-</script>
+  const MODES = {
+    focus: { label: 'Focus', mins: 25, accent: '' },
+    short: { label: 'Short break', mins: 5, accent: 'break-accent' },
+    long:  { label: 'Long break',  mins: 15, accent: 'long-accent' }
+  };
+  const CIRCUMFERENCE = 2 * Math.PI * 108;
+  let mode = 'focus', running = false, remaining = 25*60, total = 25*60;
+  let timer = null, sessions = 0, sound = true, maxSessions = 4;
 
+  const ring = document.getElementById('timerRing');
+  const label = document.getElementById('timeLabel');
+  const modeLabel = document.getElementById('modeLabel');
+  const progress = document.getElementById('ringProgress');
+  const playBtn = document.getElementById('playBtn');
+  const notif = document.getElementById('notification');
+  const sessionCount = document.getElementById('sessionCount');
+
+  function fmt(s) {
+    return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+  }
+  function updateRing() {
+    const pct = remaining / total;
+    progress.style.strokeDashoffset = CIRCUMFERENCE * (1 - pct);
+    label.textContent = fmt(remaining);
+  }
+  function renderDots() {
+    const dots = document.getElementById('sessionDots');
+    dots.innerHTML = '';
+    for (let i = 0; i < maxSessions; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i < sessions ? ' done' : '');
+      dots.appendChild(d);
+    }
+  }
+  function setMode(m) {
+    if (running) clearInterval(timer), running = false;
+    mode = m;
+    total = remaining = MODES[m].mins * 60;
+    modeLabel.textContent = MODES[m].label;
+    ring.className = 'timer-ring ' + MODES[m].accent;
+    document.querySelectorAll('.tab').forEach((t,i) => {
+      t.classList.toggle('active', ['focus','short','long'][i] === m);
+    });
+    playBtn.innerHTML = '&#9654;';
+    notif.textContent = '';
+    updateRing();
+  }
+  function toggleTimer() {
+    if (running) {
+      clearInterval(timer); running = false;
+      playBtn.innerHTML = '&#9654;';
+    } else {
+      running = true;
+      playBtn.innerHTML = '&#9646;&#9646;';
+      timer = setInterval(() => {
+        remaining--;
+        updateRing();
+        if (remaining <= 0) {
+          clearInterval(timer); running = false;
+          playBtn.innerHTML = '&#9654;';
+          onComplete();
+        }
+      }, 1000);
+    }
+  }
+  function onComplete() {
+    if (sound) playBeep();
+    if (mode === 'focus') {
+      sessions = Math.min(sessions + 1, maxSessions);
+      sessionCount.textContent = sessions;
+      renderDots();
+      notif.textContent = sessions < maxSessions ? 'Nice work! Take a short break.' : 'Great session block! Take a long break.';
+      setMode(sessions < maxSessions ? 'short' : 'long');
+      if (sessions >= maxSessions) sessions = 0;
+    } else {
+      notif.textContent = "Break's over — time to focus!";
+      setMode('focus');
+    }
+  }
+  function skipBack() {
+    clearInterval(timer); running = false;
+    remaining = total;
+    playBtn.innerHTML = '&#9654;';
+    updateRing();
+  }
+  function skipForward() {
+    clearInterval(timer); running = false;
+    onComplete();
+  }
+  function toggleSound() {
+    sound = !sound;
+    document.getElementById('soundBtn').classList.toggle('on', sound);
+  }
+  function playBeep() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      [0, 0.25, 0.5].forEach(t => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.frequency.value = 880; o.type = 'sine';
+        g.gain.setValueAtTime(0.3, ctx.currentTime + t);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.2);
+        o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + 0.3);
+      });
+    } catch(e) {}
+  }
+  renderDots();
+  updateRing();
+</script>
 </body>
 </html>
