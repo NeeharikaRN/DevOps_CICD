@@ -1,133 +1,469 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>My Food Blog</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">
-<style>
-body,h1,h2,h3,h4,h5,h6 {font-family: "Karma", sans-serif}
-.w3-bar-block .w3-bar-item {padding:20px}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0f;
+      --surface: #16161a;
+      --card: #1c1c22;
+      --border: #2a2a35;
+      --accent: #c8f53f;
+      --accent-dim: #9dbf2e;
+      --text: #f0f0f5;
+      --text-muted: #6b6b80;
+      --op-bg: #232330;
+      --op-hover: #2e2e3f;
+      --btn-bg: #1e1e28;
+      --btn-hover: #26263a;
+      --shadow: 0 32px 80px rgba(0,0,0,0.6);
+      --radius: 20px;
+    }
+
+    body {
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      overflow: hidden;
+    }
+
+    /* Subtle grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(200,245,63,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,245,63,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    /* Glow blob */
+    body::after {
+      content: '';
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,245,63,0.08) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; transform: translate(-50%,-50%) scale(1); }
+      50% { opacity: 1; transform: translate(-50%,-50%) scale(1.1); }
+    }
+
+    .calc-wrapper {
+      position: relative;
+      z-index: 1;
+      animation: slideUp 0.6s cubic-bezier(0.23,1,0.32,1) forwards;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .calc {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow), 0 0 0 1px rgba(200,245,63,0.05);
+      width: 340px;
+      overflow: hidden;
+    }
+
+    /* Header strip */
+    .calc-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .calc-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .calc-dots { display: flex; gap: 6px; }
+    .dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+    }
+    .dot:nth-child(1) { background: #ff5f57; }
+    .dot:nth-child(2) { background: #febc2e; }
+    .dot:nth-child(3) { background: var(--accent); }
+
+    /* Display */
+    .display {
+      padding: 24px 24px 16px;
+      text-align: right;
+      min-height: 110px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .display-expr {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: var(--text-muted);
+      min-height: 20px;
+      word-break: break-all;
+      transition: all 0.2s;
+    }
+
+    .display-result {
+      font-family: 'DM Mono', monospace;
+      font-size: 42px;
+      font-weight: 300;
+      color: var(--text);
+      letter-spacing: -2px;
+      line-height: 1;
+      word-break: break-all;
+      transition: all 0.15s ease;
+    }
+
+    .display-result.small { font-size: 28px; letter-spacing: -1px; }
+    .display-result.tiny  { font-size: 20px; letter-spacing: 0; }
+
+    /* Flash animation on equals */
+    @keyframes flash {
+      0%   { color: var(--accent); }
+      100% { color: var(--text); }
+    }
+    .display-result.flash { animation: flash 0.4s ease-out; }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 0 16px;
+    }
+
+    /* Button grid */
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 16px;
+    }
+
+    button {
+      all: unset;
+      cursor: pointer;
+      border-radius: 12px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--text);
+      background: var(--btn-bg);
+      border: 1px solid transparent;
+      transition: background 0.12s, transform 0.08s, border-color 0.12s, box-shadow 0.12s;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: rgba(255,255,255,0);
+      transition: background 0.1s;
+    }
+
+    button:active::after { background: rgba(255,255,255,0.07); }
+
+    button:hover {
+      background: var(--btn-hover);
+      border-color: var(--border);
+    }
+
+    button:active {
+      transform: scale(0.93);
+    }
+
+    /* Operator buttons */
+    button.op {
+      background: var(--op-bg);
+      color: var(--accent);
+      font-size: 20px;
+    }
+    button.op:hover {
+      background: var(--op-hover);
+      border-color: rgba(200,245,63,0.2);
+      box-shadow: 0 0 16px rgba(200,245,63,0.08);
+    }
+
+    /* AC / +/- / % */
+    button.func {
+      background: var(--surface);
+      color: var(--text);
+      font-size: 15px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    button.func:hover {
+      background: #202028;
+      border-color: var(--border);
+    }
+
+    /* Equals */
+    button.eq {
+      background: var(--accent);
+      color: #0d0d0f;
+      font-size: 24px;
+      font-weight: 500;
+      border-color: transparent;
+    }
+    button.eq:hover {
+      background: #d8ff50;
+      box-shadow: 0 8px 24px rgba(200,245,63,0.35);
+    }
+    button.eq:active { transform: scale(0.91); }
+
+    /* Zero spans 2 cols */
+    button.zero { grid-column: span 2; justify-content: flex-start; padding-left: 26px; }
+
+    /* Ripple */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      transform: scale(0);
+      animation: ripple-anim 0.5s linear;
+      pointer-events: none;
+    }
+    @keyframes ripple-anim {
+      to { transform: scale(4); opacity: 0; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- Sidebar (hidden by default) -->
-<nav class="w3-sidebar w3-bar-block w3-card w3-top w3-xlarge w3-animate-left" style="display:none;z-index:2;width:40%;min-width:300px" id="mySidebar">
-  <a href="javascript:void(0)" onclick="w3_close()"
-  class="w3-bar-item w3-button">Close Menu</a>
-  <a href="#food" onclick="w3_close()" class="w3-bar-item w3-button">Food</a>
-  <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button">About</a>
-</nav>
+<div class="calc-wrapper">
+  <div class="calc">
+    <div class="calc-header">
+      <span class="calc-title">Calc</span>
+      <div class="calc-dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
 
-<!-- Top menu -->
-<div class="w3-top">
-  <div class="w3-white w3-xlarge" style="max-width:1200px;margin:auto">
-    <div class="w3-button w3-padding-16 w3-left" onclick="w3_open()">☰</div>
-    <div class="w3-right w3-padding-16">Mail</div>
-    <div class="w3-center w3-padding-16">My Food</div>
-  </div>
-</div>
-  
-<!-- !PAGE CONTENT! -->
-<div class="w3-main w3-content w3-padding" style="max-width:1200px;margin-top:100px">
+    <div class="display">
+      <div class="display-expr" id="expr"></div>
+      <div class="display-result" id="result">0</div>
+    </div>
 
-  <!-- First Photo Grid-->
-  <div class="w3-row-padding w3-padding-16 w3-center" id="food">
-    <div class="w3-quarter">
-      <img src="https://vaya.in/recipes/wp-content/uploads/2018/06/Club-sandwich.jpg" alt="Sandwich" style="width:100%">
-      <h3>The Perfect Sandwich, A Real NYC Classic</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/53BGPNAB6YI63C7LFNHEQGYVAA.jpg" alt="Steak" style="width:100%">
-      <h3>Let Me Tell You About This Steak</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://blog.lexmed.com/images/librariesprovider80/blog-post-featured-images/shutterstock_1933299218.jpg?sfvrsn=4a8d900b_0" alt="Cherries" style="width:100%">
-      <h3>Cherries, interrupted</h3>
-      <p>What else?</p>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://www.acouplecooks.com/wp-content/uploads/2023/01/Red-Sauce-Pasta-008.jpg" alt="Pasta and Wine" style="width:100%">
-      <h3>Once Again, Robust Wine and Vegetable Pasta</h3>
-    </div>
-  </div>
-  
-  <!-- Second Photo Grid-->
-  <div class="w3-row-padding w3-padding-16 w3-center">
-    <div class="w3-quarter">
-      <img src="https://feelgoodfoodie.net/wp-content/uploads/2022/04/How-to-Make-Popsicles-15.jpg" alt="Popsicle" style="width:100%">
-      <h3>All I Need Is a Popsicle</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://www.wholesomeyum.com/wp-content/uploads/2021/07/wholesomeyum-Pan-Seared-Salmon-12.jpg" alt="Salmon" style="width:100%">
-      <h3>Salmon For Your Skin</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Desserts.jpg/640px-Desserts.jpg" alt="Sandwich" style="width:100%">
-      <h3>The Perfect Dessert</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://www.simplejoy.com/wp-content/uploads/2021/04/Croissant-French-Toast-5.jpg" alt="Croissant" style="width:100%">
-      <h3>Le French</h3>
+    <div class="divider"></div>
+
+    <div class="buttons">
+      <!-- Row 1 -->
+      <button class="func" data-action="ac">AC</button>
+      <button class="func" data-action="sign">+/−</button>
+      <button class="func" data-action="percent">%</button>
+      <button class="op"   data-action="op" data-val="÷">÷</button>
+
+      <!-- Row 2 -->
+      <button data-action="digit" data-val="7">7</button>
+      <button data-action="digit" data-val="8">8</button>
+      <button data-action="digit" data-val="9">9</button>
+      <button class="op" data-action="op" data-val="×">×</button>
+
+      <!-- Row 3 -->
+      <button data-action="digit" data-val="4">4</button>
+      <button data-action="digit" data-val="5">5</button>
+      <button data-action="digit" data-val="6">6</button>
+      <button class="op" data-action="op" data-val="−">−</button>
+
+      <!-- Row 4 -->
+      <button data-action="digit" data-val="1">1</button>
+      <button data-action="digit" data-val="2">2</button>
+      <button data-action="digit" data-val="3">3</button>
+      <button class="op" data-action="op" data-val="+">+</button>
+
+      <!-- Row 5 -->
+      <button class="zero" data-action="digit" data-val="0">0</button>
+      <button data-action="dot">.</button>
+      <button class="eq" data-action="eq">=</button>
     </div>
   </div>
-
-  <!-- Pagination -->
-  <div class="w3-center w3-padding-32">
-    <div class="w3-bar">
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">«</a>
-      <a href="#" class="w3-bar-item w3-black w3-button">1</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">2</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">3</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">4</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">»</a>
-    </div>
-  </div>
-  
-  <hr id="about">
-
-  <!-- About Section -->
-  <div class="w3-container w3-padding-32 w3-center">  
-    <h3>About Me, The Food Man</h3><br>
-    <img src="https://www.cordonbleu.edu/Files/MediaFile/58300.jpg" alt="Me" class="w3-image" style="display:block;margin:auto" width="800" height="533">
-    <div class="w3-padding-32">
-      <h4><b>I am Who I Am!</b></h4>
-      <h6><i>With Passion For Real, Good Food</i></h6>
-      <p>Just me, myself and I, exploring the universe of unknownment. I have a heart of love and an interest on food blog. I want to share my world with you.</p>
-    </div>
-  </div>
-  <hr>
-  
-  <!-- Footer -->
-  <footer class="w3-row-padding w3-padding-32">
-
-    <div class="w3-third w3-serif">
-      <h3>POPULAR TAGS</h3>
-      <p>
-        <span class="w3-tag w3-black w3-margin-bottom">Travel</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">New York</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Dinner</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Salmon</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">France</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Drinks</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Ideas</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Flavors</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Cuisine</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Chicken</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Dressing</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Fried</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Fish</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Duck</span>
-      </p>
-    </div>
-  </footer>
-
-<!-- End page content -->
 </div>
 
 <script>
-// Script to open and close sidebar
-function w3_open() {
-  document.getElementById("mySidebar").style.display = "block";
-}
- 
-function w3_close() {
-  document.getElementById("mySidebar").style.display = "none";
-}
-</script>
+  const resultEl = document.getElementById('result');
+  const exprEl   = document.getElementById('expr');
 
+  let current   = '0';
+  let prev      = null;
+  let op        = null;
+  let resetNext = false;
+  let justEq    = false;
+
+  function updateDisplay(val) {
+    let display = val;
+    resultEl.classList.remove('small', 'tiny');
+    if (display.length > 12) resultEl.classList.add('tiny');
+    else if (display.length > 8) resultEl.classList.add('small');
+    resultEl.textContent = display;
+  }
+
+  function setExpr(val) {
+    exprEl.textContent = val || '';
+  }
+
+  function flashResult() {
+    resultEl.classList.remove('flash');
+    void resultEl.offsetWidth;
+    resultEl.classList.add('flash');
+    setTimeout(() => resultEl.classList.remove('flash'), 400);
+  }
+
+  function compute(a, b, o) {
+    a = parseFloat(a); b = parseFloat(b);
+    switch(o) {
+      case '+': return a + b;
+      case '−': return a - b;
+      case '×': return a * b;
+      case '÷': return b !== 0 ? a / b : 'Error';
+    }
+  }
+
+  function formatNum(n) {
+    if (n === 'Error') return 'Error';
+    let s = parseFloat(n.toPrecision(12)).toString();
+    return s;
+  }
+
+  function handleDigit(d) {
+    if (justEq) { current = d; justEq = false; setExpr(''); }
+    else if (resetNext) { current = d; resetNext = false; }
+    else { current = current === '0' ? d : (current + d); }
+    if (current.length > 15) return;
+    updateDisplay(current);
+  }
+
+  function handleDot() {
+    if (resetNext) { current = '0.'; resetNext = false; updateDisplay(current); return; }
+    if (!current.includes('.')) { current += '.'; updateDisplay(current); }
+  }
+
+  function handleOp(o) {
+    justEq = false;
+    if (op && !resetNext) {
+      let res = compute(prev, current, op);
+      res = formatNum(res);
+      prev = res; current = res;
+    } else {
+      prev = current;
+    }
+    op = o;
+    resetNext = true;
+    setExpr(`${prev} ${op}`);
+    updateDisplay(current);
+  }
+
+  function handleEq() {
+    if (!op || !prev) return;
+    let res = compute(prev, current, op);
+    setExpr(`${prev} ${op} ${current} =`);
+    res = formatNum(res);
+    current = res; prev = null; op = null;
+    resetNext = false; justEq = true;
+    updateDisplay(current);
+    flashResult();
+  }
+
+  function handleAC() {
+    current = '0'; prev = null; op = null; resetNext = false; justEq = false;
+    setExpr(''); updateDisplay('0');
+  }
+
+  function handleSign() {
+    if (current === '0') return;
+    current = current.startsWith('-') ? current.slice(1) : '-' + current;
+    updateDisplay(current);
+  }
+
+  function handlePercent() {
+    current = formatNum(parseFloat(current) / 100);
+    updateDisplay(current);
+  }
+
+  // Ripple effect
+  function addRipple(btn, e) {
+    const r = document.createElement('span');
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    r.className = 'ripple';
+    r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+    btn.appendChild(r);
+    setTimeout(() => r.remove(), 600);
+  }
+
+  document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', e => {
+      addRipple(btn, e);
+      const action = btn.dataset.action;
+      const val    = btn.dataset.val;
+      if (action === 'digit')   handleDigit(val);
+      else if (action === 'op') handleOp(val);
+      else if (action === 'eq') handleEq();
+      else if (action === 'ac') handleAC();
+      else if (action === 'sign') handleSign();
+      else if (action === 'percent') handlePercent();
+      else if (action === 'dot') handleDot();
+    });
+  });
+
+  // Keyboard support
+  document.addEventListener('keydown', e => {
+    const k = e.key;
+    if ('0123456789'.includes(k)) handleDigit(k);
+    else if (k === '.') handleDot();
+    else if (k === '+') handleOp('+');
+    else if (k === '-') handleOp('−');
+    else if (k === '*') handleOp('×');
+    else if (k === '/') { e.preventDefault(); handleOp('÷'); }
+    else if (k === 'Enter' || k === '=') handleEq();
+    else if (k === 'Escape') handleAC();
+    else if (k === '%') handlePercent();
+    else if (k === 'Backspace') {
+      if (current.length > 1) { current = current.slice(0,-1); updateDisplay(current); }
+      else { current = '0'; updateDisplay('0'); }
+    }
+  });
+</script>
 </body>
 </html>
