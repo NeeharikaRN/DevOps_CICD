@@ -1,133 +1,1669 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>My Food Blog</title>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CALC × TTT</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-body,h1,h2,h3,h4,h5,h6 {font-family: "Karma", sans-serif}
-.w3-bar-block .w3-bar-item {padding:20px}
+  :root {
+    --bg: #0d0d0f;
+    --surface: #16161a;
+    --surface2: #1e1e24;
+    --border: #2a2a35;
+    --accent: #f5c842;
+    --accent2: #ff6b35;
+    --accent3: #5f9fff;
+    --text: #f0f0f5;
+    --text-muted: #6b6b80;
+    --btn-num: #1e1e28;
+    --btn-op: #2a2040;
+    --btn-eq: #f5c842;
+    --btn-clear: #2a1a1a;
+    --shadow: 0 8px 32px rgba(0,0,0,0.5);
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+    overflow-x: hidden;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  header h1 {
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  header p {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    margin-top: 4px;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    width: 100%;
+    max-width: 820px;
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 660px) {
+    .layout {
+      grid-template-columns: 1fr;
+      max-width: 380px;
+    }
+  }
+
+  /* ===== CALCULATOR ===== */
+  .calculator {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .calc-header {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .display {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    min-height: 88px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    gap: 4px;
+    overflow: hidden;
+  }
+
+  .display-expr {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    min-height: 1.2em;
+    word-break: break-all;
+    text-align: right;
+  }
+
+  .display-value {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-weight: 700;
+    color: var(--text);
+    word-break: break-all;
+    text-align: right;
+    transition: transform 0.1s ease;
+    line-height: 1;
+  }
+
+  .display-value.pulse {
+    transform: scale(0.97);
+    color: var(--accent);
+  }
+
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    padding: 0;
+    height: 52px;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    transition: background 0.1s;
+    border-radius: inherit;
+  }
+
+  .btn:active::after {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .btn:active {
+    transform: scale(0.94);
+  }
+
+  .btn-num {
+    background: var(--btn-num);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-num:hover {
+    background: #252530;
+    border-color: #3a3a50;
+  }
+
+  .btn-op {
+    background: var(--btn-op);
+    color: var(--accent3);
+    border: 1px solid #3a3060;
+  }
+
+  .btn-op:hover {
+    background: #35284e;
+  }
+
+  .btn-clear {
+    background: var(--btn-clear);
+    color: var(--accent2);
+    border: 1px solid #3a2020;
+  }
+
+  .btn-clear:hover {
+    background: #351a1a;
+  }
+
+  .btn-eq {
+    background: var(--btn-eq);
+    color: #0d0d0f;
+    grid-column: span 2;
+    font-size: 1.1rem;
+  }
+
+  .btn-eq:hover {
+    background: #ffd055;
+    box-shadow: 0 0 20px rgba(245, 200, 66, 0.35);
+  }
+
+  .btn-zero {
+    grid-column: span 1;
+  }
+
+  /* ===== TIC TAC TOE ===== */
+  .tictactoe {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ttt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .ttt-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--accent2);
+    text-transform: uppercase;
+  }
+
+  .ttt-reset {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+
+  .ttt-reset:hover {
+    border-color: var(--accent2);
+    color: var(--accent2);
+  }
+
+  .scoreboard {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .score-card {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .score-card.active {
+    border-color: var(--accent3);
+    box-shadow: 0 0 16px rgba(95, 159, 255, 0.2);
+  }
+
+  .score-card .symbol {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .score-card.x-card .symbol { color: var(--accent3); }
+  .score-card.o-card .symbol { color: var(--accent2); }
+  .score-card.tie-card .symbol { color: var(--text-muted); font-size: 0.85rem; }
+
+  .score-card .score-val {
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .score-card .score-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+
+  .status-bar {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    text-align: center;
+    color: var(--text-muted);
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .status-bar.win {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(245, 200, 66, 0.06);
+  }
+
+  .status-bar.draw {
+    border-color: var(--text-muted);
+    color: var(--text);
+  }
+
+  .board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    aspect-ratio: 1;
+  }
+
+  .cell {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .cell:hover:not(.taken) {
+    background: var(--surface2);
+    border-color: #3a3a50;
+    transform: scale(1.04);
+  }
+
+  .cell.x {
+    color: var(--accent3);
+    border-color: rgba(95, 159, 255, 0.3);
+  }
+
+  .cell.o {
+    color: var(--accent2);
+    border-color: rgba(255, 107, 53, 0.3);
+  }
+
+  .cell.taken {
+    cursor: default;
+  }
+
+  .cell.winning {
+    background: rgba(245, 200, 66, 0.08);
+    border-color: var(--accent);
+    animation: winPulse 0.5s ease 0s 1;
+  }
+
+  @keyframes winPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+  .cell-enter {
+    animation: cellPop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  @keyframes cellPop {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .mode-toggle {
+    display: flex;
+    gap: 6px;
+  }
+
+  .mode-btn {
+    flex: 1;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    padding: 5px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .mode-btn.active {
+    background: var(--surface2);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .mode-btn:hover:not(.active) {
+    border-color: var(--text-muted);
+    color: var(--text);
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 32px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-align: center;
+    letter-spacing: 0.1em;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Glow blobs */
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.06;
+  }
+  .blob-1 { width: 400px; height: 400px; background: var(--accent); top: -100px; left: -100px; }
+  .blob-2 { width: 350px; height: 350px; background: var(--accent2); bottom: -50px; right: -50px; }
+  .blob-3 { width: 300px; height: 300px; background: var(--accent3); top: 40%; left: 40%; }
 </style>
 </head>
 <body>
 
-<!-- Sidebar (hidden by default) -->
-<nav class="w3-sidebar w3-bar-block w3-card w3-top w3-xlarge w3-animate-left" style="display:none;z-index:2;width:40%;min-width:300px" id="mySidebar">
-  <a href="javascript:void(0)" onclick="w3_close()"
-  class="w3-bar-item w3-button">Close Menu</a>
-  <a href="#food" onclick="w3_close()" class="w3-bar-item w3-button">Food</a>
-  <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button">About</a>
-</nav>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
 
-<!-- Top menu -->
-<div class="w3-top">
-  <div class="w3-white w3-xlarge" style="max-width:1200px;margin:auto">
-    <div class="w3-button w3-padding-16 w3-left" onclick="w3_open()">☰</div>
-    <div class="w3-right w3-padding-16">Mail</div>
-    <div class="w3-center w3-padding-16">My Food</div>
+<header>
+  <h1>CALC × TTT</h1>
+  <p>CALCULATOR + TIC TAC TOE</p>
+</header>
+
+<div class="layout">
+
+  <!-- CALCULATOR -->
+  <div class="calculator">
+    <div class="calc-header">⬛ CALCULATOR</div>
+
+    <div class="display">
+      <div class="display-expr" id="expr"></div>
+      <div class="display-value" id="display">0</div>
+    </div>
+
+    <div class="buttons">
+      <button class="btn btn-clear" onclick="calcAction('AC')">AC</button>
+      <button class="btn btn-op"    onclick="calcAction('+/-')">±</button>
+      <button class="btn btn-op"    onclick="calcAction('%')">%</button>
+      <button class="btn btn-op"    onclick="calcAction('÷')">÷</button>
+
+      <button class="btn btn-num" onclick="calcAction('7')">7</button>
+      <button class="btn btn-num" onclick="calcAction('8')">8</button>
+      <button class="btn btn-num" onclick="calcAction('9')">9</button>
+      <button class="btn btn-op"  onclick="calcAction('×')">×</button>
+
+      <button class="btn btn-num" onclick="calcAction('4')">4</button>
+      <button class="btn btn-num" onclick="calcAction('5')">5</button>
+      <button class="btn btn-num" onclick="calcAction('6')">6</button>
+      <button class="btn btn-op"  onclick="calcAction('-')">−</button>
+
+      <button class="btn btn-num" onclick="calcAction('1')">1</button>
+      <button class="btn btn-num" onclick="calcAction('2')">2</button>
+      <button class="btn btn-num" onclick="calcAction('3')">3</button>
+      <button class="btn btn-op"  onclick="calcAction('+')">+</button>
+
+      <button class="btn btn-num btn-zero" onclick="calcAction('0')">0</button>
+      <button class="btn btn-num" onclick="calcAction('.')">.</button>
+      <button class="btn btn-eq" onclick="calcAction('=')">=</button>
+    </div>
   </div>
+
+  <!-- TIC TAC TOE -->
+  <div class="tictactoe">
+    <div class="ttt-header">
+      <div class="ttt-label">⬛ TIC TAC TOE</div>
+      <button class="ttt-reset" onclick="resetGame()">RESET</button>
+    </div>
+
+    <div class="scoreboard">
+      <div class="score-card x-card" id="score-x">
+        <div class="symbol">X</div>
+        <div class="score-val" id="score-x-val">0</div>
+        <div class="score-label">PLAYER</div>
+      </div>
+      <div class="score-card tie-card" id="score-tie">
+        <div class="symbol">TIE</div>
+        <div class="score-val" id="score-tie-val">0</div>
+        <div class="score-label">DRAWS</div>
+      </div>
+      <div class="score-card o-card" id="score-o">
+        <div class="symbol">O</div>
+        <div class="score-val" id="score-o-val">0</div>
+        <div class="score-label" id="o-label">AI</div>
+      </div>
+    </div>
+
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="mode-ai" onclick="setMode('ai')">VS AI</button>
+      <button class="mode-btn" id="mode-2p" onclick="setMode('2p')">2 PLAYER</button>
+    </div>
+
+    <div class="status-bar" id="status">X's turn</div>
+
+    <div class="board" id="board">
+      <div class="cell" onclick="cellClick(0)" id="c0"></div>
+      <div class="cell" onclick="cellClick(1)" id="c1"></div>
+      <div class="cell" onclick="cellClick(2)" id="c2"></div>
+      <div class="cell" onclick="cellClick(3)" id="c3"></div>
+      <div class="cell" onclick="cellClick(4)" id="c4"></div>
+      <div class="cell" onclick="cellClick(5)" id="c5"></div>
+      <div class="cell" onclick="cellClick(6)" id="c6"></div>
+      <div class="cell" onclick="cellClick(7)" id="c7"></div>
+      <div class="cell" onclick="cellClick(8)" id="c8"></div>
+    </div>
+  </div>
+
 </div>
-  
-<!-- !PAGE CONTENT! -->
-<div class="w3-main w3-content w3-padding" style="max-width:1200px;margin-top:100px">
 
-  <!-- First Photo Grid-->
-  <div class="w3-row-padding w3-padding-16 w3-center" id="food">
-    <div class="w3-quarter">
-      <img src="https://vaya.in/recipes/wp-content/uploads/2018/06/Club-sandwich.jpg" alt="Sandwich" style="width:100%">
-      <h3>The Perfect Sandwich, A Real NYC Classic</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/53BGPNAB6YI63C7LFNHEQGYVAA.jpg" alt="Steak" style="width:100%">
-      <h3>Let Me Tell You About This Steak</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://blog.lexmed.com/images/librariesprovider80/blog-post-featured-images/shutterstock_1933299218.jpg?sfvrsn=4a8d900b_0" alt="Cherries" style="width:100%">
-      <h3>Cherries, interrupted</h3>
-      <p>What else?</p>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://www.acouplecooks.com/wp-content/uploads/2023/01/Red-Sauce-Pasta-008.jpg" alt="Pasta and Wine" style="width:100%">
-      <h3>Once Again, Robust Wine and Vegetable Pasta</h3>
-    </div>
-  </div>
-  
-  <!-- Second Photo Grid-->
-  <div class="w3-row-padding w3-padding-16 w3-center">
-    <div class="w3-quarter">
-      <img src="https://feelgoodfoodie.net/wp-content/uploads/2022/04/How-to-Make-Popsicles-15.jpg" alt="Popsicle" style="width:100%">
-      <h3>All I Need Is a Popsicle</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://www.wholesomeyum.com/wp-content/uploads/2021/07/wholesomeyum-Pan-Seared-Salmon-12.jpg" alt="Salmon" style="width:100%">
-      <h3>Salmon For Your Skin</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Desserts.jpg/640px-Desserts.jpg" alt="Sandwich" style="width:100%">
-      <h3>The Perfect Dessert</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://www.simplejoy.com/wp-content/uploads/2021/04/Croissant-French-Toast-5.jpg" alt="Croissant" style="width:100%">
-      <h3>Le French</h3>
-    </div>
-  </div>
-
-  <!-- Pagination -->
-  <div class="w3-center w3-padding-32">
-    <div class="w3-bar">
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">«</a>
-      <a href="#" class="w3-bar-item w3-black w3-button">1</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">2</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">3</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">4</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">»</a>
-    </div>
-  </div>
-  
-  <hr id="about">
-
-  <!-- About Section -->
-  <div class="w3-container w3-padding-32 w3-center">  
-    <h3>About Me, The Food Man</h3><br>
-    <img src="https://www.cordonbleu.edu/Files/MediaFile/58300.jpg" alt="Me" class="w3-image" style="display:block;margin:auto" width="800" height="533">
-    <div class="w3-padding-32">
-      <h4><b>I am Who I Am!</b></h4>
-      <h6><i>With Passion For Real, Good Food</i></h6>
-      <p>Just me, myself and I, exploring the universe of unknownment. I have a heart of love and an interest on food blog. I want to share my world with you.</p>
-    </div>
-  </div>
-  <hr>
-  
-  <!-- Footer -->
-  <footer class="w3-row-padding w3-padding-32">
-
-    <div class="w3-third w3-serif">
-      <h3>POPULAR TAGS</h3>
-      <p>
-        <span class="w3-tag w3-black w3-margin-bottom">Travel</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">New York</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Dinner</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Salmon</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">France</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Drinks</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Ideas</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Flavors</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Cuisine</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Chicken</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Dressing</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Fried</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Fish</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Duck</span>
-      </p>
-    </div>
-  </footer>
-
-<!-- End page content -->
-</div>
+<footer>CALC × TTT — MADE WITH ♥</footer>
 
 <script>
-// Script to open and close sidebar
-function w3_open() {
-  document.getElementById("mySidebar").style.display = "block";
-}
- 
-function w3_close() {
-  document.getElementById("mySidebar").style.display = "none";
-}
-</script>
+// ===== CALCULATOR =====
+let calcState = {
+  current: '0',
+  previous: '',
+  operator: null,
+  justCalc: false,
+  expr: ''
+};
 
+function updateDisplay() {
+  const d = document.getElementById('display');
+  const e = document.getElementById('expr');
+  d.textContent = calcState.current;
+  e.textContent = calcState.expr;
+
+  // Auto-shrink font for long numbers
+  const len = calcState.current.length;
+  d.style.fontSize = len > 12 ? 'clamp(0.9rem, 3vw, 1.2rem)' :
+                     len > 9  ? 'clamp(1.2rem, 3vw, 1.6rem)' :
+                                 'clamp(1.6rem, 4vw, 2.2rem)';
+}
+
+function pulseDisplay() {
+  const d = document.getElementById('display');
+  d.classList.add('pulse');
+  setTimeout(() => d.classList.remove('pulse'), 150);
+}
+
+function calcAction(btn) {
+  const s = calcState;
+
+  if (btn === 'AC') {
+    s.current = '0'; s.previous = ''; s.operator = null; s.justCalc = false; s.expr = '';
+    updateDisplay(); return;
+  }
+
+  if (btn === '+/-') {
+    if (s.current !== '0') s.current = (parseFloat(s.current) * -1).toString();
+    updateDisplay(); return;
+  }
+
+  if (btn === '%') {
+    s.current = (parseFloat(s.current) / 100).toString();
+    updateDisplay(); return;
+  }
+
+  const isOp = ['÷', '×', '-', '+'].includes(btn);
+
+  if (btn === '=') {
+    if (!s.operator || s.previous === '') return;
+    const a = parseFloat(s.previous), b = parseFloat(s.current);
+    let result;
+    if (s.operator === '÷') result = b === 0 ? 'ERR' : a / b;
+    else if (s.operator === '×') result = a * b;
+    else if (s.operator === '-') result = a - b;
+    else if (s.operator === '+') result = a + b;
+
+    s.expr = `${s.previous} ${s.operator} ${s.current} =`;
+    s.current = result === 'ERR' ? 'ERR' : parseFloat(result.toFixed(10)).toString();
+    s.previous = ''; s.operator = null; s.justCalc = true;
+    pulseDisplay(); updateDisplay(); return;
+  }
+
+  if (isOp) {
+    if (s.operator && !s.justCalc) {
+      const a = parseFloat(s.previous), b = parseFloat(s.current);
+      let result;
+      if (s.operator === '÷') result = b === 0 ? 0 : a / b;
+      else if (s.operator === '×') result = a * b;
+      else if (s.operator === '-') result = a - b;
+      else if (s.operator === '+') result = a + b;
+      s.previous = parseFloat(result.toFixed(10)).toString();
+    } else {
+      s.previous = s.current;
+    }
+    s.operator = btn;
+    s.expr = `${s.previous} ${btn}`;
+    s.justCalc = false;
+    s.current = '0';
+    updateDisplay(); return;
+  }
+
+  if (btn === '.') {
+    if (s.justCalc) { s.current = '0.'; s.justCalc = false; updateDisplay(); return; }
+    if (!s.current.includes('.')) s.current += '.';
+    updateDisplay(); return;
+  }
+
+  // Digit
+  if (s.justCalc) { s.current = btn; s.justCalc = false; }
+  else if (s.current === '0') s.current = btn;
+  else if (s.current.length < 15) s.current += btn;
+  updateDisplay();
+}
+
+// Keyboard support
+document.addEventListener('keydown', e => {
+  const map = {
+    '0':'0','1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9',
+    '.':'.','Enter':'=','=':'=','Backspace':'DEL','Escape':'AC',
+    '+':'+','-':'-','*':'×','/':'÷','%':'%'
+  };
+  if (e.key === 'Backspace') {
+    if (calcState.current.length > 1) calcState.current = calcState.current.slice(0,-1);
+    else calcState.current = '0';
+    updateDisplay();
+  } else if (map[e.key]) calcAction(map[e.key]);
+});
+
+
+// ===== TIC TAC TOE =====
+let board = Array(9).fill(null);
+let currentPlayer = 'X';
+let gameOver = false;
+let scores = { X: 0, O: 0, tie: 0 };
+let vsAI = true;
+const WINS = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+function setMode(mode) {
+  vsAI = mode === 'ai';
+  document.getElementById('mode-ai').classList.toggle('active', vsAI);
+  document.getElementById('mode-2p').classList.toggle('active', !vsAI);
+  document.getElementById('o-label').textContent = vsAI ? 'AI' : 'PLAYER';
+  resetGame();
+}
+
+function cellClick(i) {
+  if (gameOver || board[i]) return;
+  if (vsAI && currentPlayer === 'O') return;
+  makeMove(i, currentPlayer);
+}
+
+function makeMove(i, player) {
+  board[i] = player;
+  const cell = document.getElementById('c' + i);
+  cell.textContent = player;
+  cell.classList.add(player.toLowerCase(), 'taken', 'cell-enter');
+
+  const winner = checkWinner();
+  if (winner) {
+    highlightWin(winner.combo);
+    if (winner.player === 'tie') {
+      scores.tie++;
+      document.getElementById('score-tie-val').textContent = scores.tie;
+      setStatus('DRAW!', 'draw');
+    } else {
+      scores[winner.player]++;
+      document.getElementById(`score-${winner.player.toLowerCase()}-val`).textContent = scores[winner.player];
+      const who = vsAI && winner.player === 'O' ? 'AI WINS! 🤖' : `${winner.player} WINS! 🎉`;
+      setStatus(who, 'win');
+    }
+    gameOver = true; return;
+  }
+
+  currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+  updateActiveScore();
+
+  if (vsAI && currentPlayer === 'O') {
+    setStatus("AI is thinking...", '');
+    setTimeout(() => {
+      const move = getBestMove();
+      makeMove(move, 'O');
+    }, 320);
+  } else {
+    setStatus(`${currentPlayer}'s turn`,'');
+  }
+}
+
+function setStatus(msg, cls) {
+  const s = document.getElementById('status');
+  s.textContent = msg;
+  s.className = 'status-bar';
+  if (cls) s.classList.add(cls);
+}
+
+function updateActiveScore() {
+  document.getElementById('score-x').classList.toggle('active', currentPlayer === 'X');
+  document.getElementById('score-o').classList.toggle('active', currentPlayer === 'O');
+}
+
+function checkWinner() {
+  for (const combo of WINS) {
+    const [a,b,c] = combo;
+    if (board[a] && board[a] === board[b] && board[b] === board[c])
+      return { player: board[a], combo };
+  }
+  if (board.every(c => c)) return { player: 'tie', combo: [] };
+  return null;
+}
+
+function highlightWin(combo) {
+  combo.forEach(i => document.getElementById('c'+i).classList.add('winning'));
+}
+
+// Minimax AI
+function getBestMove() {
+  let best = -Infinity, move = -1;
+  for (let i = 0; i < 9; i++) {
+    if (!board[i]) {
+      board[i] = 'O';
+      const score = minimax(board, 0, false);
+      board[i] = null;
+      if (score > best) { best = score; move = i; }
+    }
+  }
+  return move;
+}
+
+function minimax(b, depth, isMax) {
+  const winner = checkWinnerBoard(b);
+  if (winner === 'O') return 10 - depth;
+  if (winner === 'X') return depth - 10;
+  if (b.every(c => c)) return 0;
+  if (isMax) {
+    let best = -Infinity;
+    for (let i = 0; i < 9; i++) {
+      if (!b[i]) {
+        b[i] = 'O';
+        best = Math.max(best, minimax(b, depth+1, false));
+        b[i] = null;
+      }
+    }
+    return best;
+  } else {
+    let best = Infinity;
+    for (let i = 0; i < 9; i++) {
+      if (!b[i]) {
+        b[i] = 'X';
+        best = Math.min(best, minimax(b, depth+1, true));
+        b[i] = null;
+      }
+    }
+    return best;
+  }
+}
+
+function checkWinnerBoard(b) {
+  for (const [a,c,d] of WINS) {
+    if (b[a] && b[a] === b[c] && b[c] === b[d]) return b[a];
+  }
+  return null;
+}
+
+function resetGame() {
+  board = Array(9).fill(null);
+  currentPlayer = 'X';
+  gameOver = false;
+  for (let i = 0; i < 9; i++) {
+    const c = document.getElementById('c'+i);
+    c.textContent = '';
+    c.className = 'cell';
+  }
+  document.getElementById('score-x').classList.remove('active');
+  document.getElementById('score-o').classList.remove('active');
+  document.getElementById('score-x').classList.add('active');
+  setStatus("X's turn", '');
+}
+
+// Init
+updateDisplay();
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CALC × TTT</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #16161a;
+    --surface2: #1e1e24;
+    --border: #2a2a35;
+    --accent: #f5c842;
+    --accent2: #ff6b35;
+    --accent3: #5f9fff;
+    --text: #f0f0f5;
+    --text-muted: #6b6b80;
+    --btn-num: #1e1e28;
+    --btn-op: #2a2040;
+    --btn-eq: #f5c842;
+    --btn-clear: #2a1a1a;
+    --shadow: 0 8px 32px rgba(0,0,0,0.5);
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+    overflow-x: hidden;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  header h1 {
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  header p {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    margin-top: 4px;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    width: 100%;
+    max-width: 820px;
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 660px) {
+    .layout {
+      grid-template-columns: 1fr;
+      max-width: 380px;
+    }
+  }
+
+  /* ===== CALCULATOR ===== */
+  .calculator {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .calc-header {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .display {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    min-height: 88px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    gap: 4px;
+    overflow: hidden;
+  }
+
+  .display-expr {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    min-height: 1.2em;
+    word-break: break-all;
+    text-align: right;
+  }
+
+  .display-value {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-weight: 700;
+    color: var(--text);
+    word-break: break-all;
+    text-align: right;
+    transition: transform 0.1s ease;
+    line-height: 1;
+  }
+
+  .display-value.pulse {
+    transform: scale(0.97);
+    color: var(--accent);
+  }
+
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    padding: 0;
+    height: 52px;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    transition: background 0.1s;
+    border-radius: inherit;
+  }
+
+  .btn:active::after {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .btn:active {
+    transform: scale(0.94);
+  }
+
+  .btn-num {
+    background: var(--btn-num);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-num:hover {
+    background: #252530;
+    border-color: #3a3a50;
+  }
+
+  .btn-op {
+    background: var(--btn-op);
+    color: var(--accent3);
+    border: 1px solid #3a3060;
+  }
+
+  .btn-op:hover {
+    background: #35284e;
+  }
+
+  .btn-clear {
+    background: var(--btn-clear);
+    color: var(--accent2);
+    border: 1px solid #3a2020;
+  }
+
+  .btn-clear:hover {
+    background: #351a1a;
+  }
+
+  .btn-eq {
+    background: var(--btn-eq);
+    color: #0d0d0f;
+    grid-column: span 2;
+    font-size: 1.1rem;
+  }
+
+  .btn-eq:hover {
+    background: #ffd055;
+    box-shadow: 0 0 20px rgba(245, 200, 66, 0.35);
+  }
+
+  .btn-zero {
+    grid-column: span 1;
+  }
+
+  /* ===== TIC TAC TOE ===== */
+  .tictactoe {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ttt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .ttt-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--accent2);
+    text-transform: uppercase;
+  }
+
+  .ttt-reset {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+
+  .ttt-reset:hover {
+    border-color: var(--accent2);
+    color: var(--accent2);
+  }
+
+  .scoreboard {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .score-card {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .score-card.active {
+    border-color: var(--accent3);
+    box-shadow: 0 0 16px rgba(95, 159, 255, 0.2);
+  }
+
+  .score-card .symbol {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .score-card.x-card .symbol { color: var(--accent3); }
+  .score-card.o-card .symbol { color: var(--accent2); }
+  .score-card.tie-card .symbol { color: var(--text-muted); font-size: 0.85rem; }
+
+  .score-card .score-val {
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .score-card .score-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+
+  .status-bar {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    text-align: center;
+    color: var(--text-muted);
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .status-bar.win {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(245, 200, 66, 0.06);
+  }
+
+  .status-bar.draw {
+    border-color: var(--text-muted);
+    color: var(--text);
+  }
+
+  .board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    aspect-ratio: 1;
+  }
+
+  .cell {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .cell:hover:not(.taken) {
+    background: var(--surface2);
+    border-color: #3a3a50;
+    transform: scale(1.04);
+  }
+
+  .cell.x {
+    color: var(--accent3);
+    border-color: rgba(95, 159, 255, 0.3);
+  }
+
+  .cell.o {
+    color: var(--accent2);
+    border-color: rgba(255, 107, 53, 0.3);
+  }
+
+  .cell.taken {
+    cursor: default;
+  }
+
+  .cell.winning {
+    background: rgba(245, 200, 66, 0.08);
+    border-color: var(--accent);
+    animation: winPulse 0.5s ease 0s 1;
+  }
+
+  @keyframes winPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+  .cell-enter {
+    animation: cellPop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  @keyframes cellPop {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .mode-toggle {
+    display: flex;
+    gap: 6px;
+  }
+
+  .mode-btn {
+    flex: 1;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    padding: 5px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .mode-btn.active {
+    background: var(--surface2);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .mode-btn:hover:not(.active) {
+    border-color: var(--text-muted);
+    color: var(--text);
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 32px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-align: center;
+    letter-spacing: 0.1em;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Glow blobs */
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.06;
+  }
+  .blob-1 { width: 400px; height: 400px; background: var(--accent); top: -100px; left: -100px; }
+  .blob-2 { width: 350px; height: 350px; background: var(--accent2); bottom: -50px; right: -50px; }
+  .blob-3 { width: 300px; height: 300px; background: var(--accent3); top: 40%; left: 40%; }
+</style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<header>
+  <h1>CALC × TTT</h1>
+  <p>CALCULATOR + TIC TAC TOE</p>
+</header>
+
+<div class="layout">
+
+  <!-- CALCULATOR -->
+  <div class="calculator">
+    <div class="calc-header">⬛ CALCULATOR</div>
+
+    <div class="display">
+      <div class="display-expr" id="expr"></div>
+      <div class="display-value" id="display">0</div>
+    </div>
+
+    <div class="buttons">
+      <button class="btn btn-clear" onclick="calcAction('AC')">AC</button>
+      <button class="btn btn-op"    onclick="calcAction('+/-')">±</button>
+      <button class="btn btn-op"    onclick="calcAction('%')">%</button>
+      <button class="btn btn-op"    onclick="calcAction('÷')">÷</button>
+
+      <button class="btn btn-num" onclick="calcAction('7')">7</button>
+      <button class="btn btn-num" onclick="calcAction('8')">8</button>
+      <button class="btn btn-num" onclick="calcAction('9')">9</button>
+      <button class="btn btn-op"  onclick="calcAction('×')">×</button>
+
+      <button class="btn btn-num" onclick="calcAction('4')">4</button>
+      <button class="btn btn-num" onclick="calcAction('5')">5</button>
+      <button class="btn btn-num" onclick="calcAction('6')">6</button>
+      <button class="btn btn-op"  onclick="calcAction('-')">−</button>
+
+      <button class="btn btn-num" onclick="calcAction('1')">1</button>
+      <button class="btn btn-num" onclick="calcAction('2')">2</button>
+      <button class="btn btn-num" onclick="calcAction('3')">3</button>
+      <button class="btn btn-op"  onclick="calcAction('+')">+</button>
+
+      <button class="btn btn-num btn-zero" onclick="calcAction('0')">0</button>
+      <button class="btn btn-num" onclick="calcAction('.')">.</button>
+      <button class="btn btn-eq" onclick="calcAction('=')">=</button>
+    </div>
+  </div>
+
+  <!-- TIC TAC TOE -->
+  <div class="tictactoe">
+    <div class="ttt-header">
+      <div class="ttt-label">⬛ TIC TAC TOE</div>
+      <button class="ttt-reset" onclick="resetGame()">RESET</button>
+    </div>
+
+    <div class="scoreboard">
+      <div class="score-card x-card" id="score-x">
+        <div class="symbol">X</div>
+        <div class="score-val" id="score-x-val">0</div>
+        <div class="score-label">PLAYER</div>
+      </div>
+      <div class="score-card tie-card" id="score-tie">
+        <div class="symbol">TIE</div>
+        <div class="score-val" id="score-tie-val">0</div>
+        <div class="score-label">DRAWS</div>
+      </div>
+      <div class="score-card o-card" id="score-o">
+        <div class="symbol">O</div>
+        <div class="score-val" id="score-o-val">0</div>
+        <div class="score-label" id="o-label">AI</div>
+      </div>
+    </div>
+
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="mode-ai" onclick="setMode('ai')">VS AI</button>
+      <button class="mode-btn" id="mode-2p" onclick="setMode('2p')">2 PLAYER</button>
+    </div>
+
+    <div class="status-bar" id="status">X's turn</div>
+
+    <div class="board" id="board">
+      <div class="cell" onclick="cellClick(0)" id="c0"></div>
+      <div class="cell" onclick="cellClick(1)" id="c1"></div>
+      <div class="cell" onclick="cellClick(2)" id="c2"></div>
+      <div class="cell" onclick="cellClick(3)" id="c3"></div>
+      <div class="cell" onclick="cellClick(4)" id="c4"></div>
+      <div class="cell" onclick="cellClick(5)" id="c5"></div>
+      <div class="cell" onclick="cellClick(6)" id="c6"></div>
+      <div class="cell" onclick="cellClick(7)" id="c7"></div>
+      <div class="cell" onclick="cellClick(8)" id="c8"></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>CALC × TTT — MADE WITH ♥</footer>
+
+<script>
+// ===== CALCULATOR =====
+let calcState = {
+  current: '0',
+  previous: '',
+  operator: null,
+  justCalc: false,
+  expr: ''
+};
+
+function updateDisplay() {
+  const d = document.getElementById('display');
+  const e = document.getElementById('expr');
+  d.textContent = calcState.current;
+  e.textContent = calcState.expr;
+
+  // Auto-shrink font for long numbers
+  const len = calcState.current.length;
+  d.style.fontSize = len > 12 ? 'clamp(0.9rem, 3vw, 1.2rem)' :
+                     len > 9  ? 'clamp(1.2rem, 3vw, 1.6rem)' :
+                                 'clamp(1.6rem, 4vw, 2.2rem)';
+}
+
+function pulseDisplay() {
+  const d = document.getElementById('display');
+  d.classList.add('pulse');
+  setTimeout(() => d.classList.remove('pulse'), 150);
+}
+
+function calcAction(btn) {
+  const s = calcState;
+
+  if (btn === 'AC') {
+    s.current = '0'; s.previous = ''; s.operator = null; s.justCalc = false; s.expr = '';
+    updateDisplay(); return;
+  }
+
+  if (btn === '+/-') {
+    if (s.current !== '0') s.current = (parseFloat(s.current) * -1).toString();
+    updateDisplay(); return;
+  }
+
+  if (btn === '%') {
+    s.current = (parseFloat(s.current) / 100).toString();
+    updateDisplay(); return;
+  }
+
+  const isOp = ['÷', '×', '-', '+'].includes(btn);
+
+  if (btn === '=') {
+    if (!s.operator || s.previous === '') return;
+    const a = parseFloat(s.previous), b = parseFloat(s.current);
+    let result;
+    if (s.operator === '÷') result = b === 0 ? 'ERR' : a / b;
+    else if (s.operator === '×') result = a * b;
+    else if (s.operator === '-') result = a - b;
+    else if (s.operator === '+') result = a + b;
+
+    s.expr = `${s.previous} ${s.operator} ${s.current} =`;
+    s.current = result === 'ERR' ? 'ERR' : parseFloat(result.toFixed(10)).toString();
+    s.previous = ''; s.operator = null; s.justCalc = true;
+    pulseDisplay(); updateDisplay(); return;
+  }
+
+  if (isOp) {
+    if (s.operator && !s.justCalc) {
+      const a = parseFloat(s.previous), b = parseFloat(s.current);
+      let result;
+      if (s.operator === '÷') result = b === 0 ? 0 : a / b;
+      else if (s.operator === '×') result = a * b;
+      else if (s.operator === '-') result = a - b;
+      else if (s.operator === '+') result = a + b;
+      s.previous = parseFloat(result.toFixed(10)).toString();
+    } else {
+      s.previous = s.current;
+    }
+    s.operator = btn;
+    s.expr = `${s.previous} ${btn}`;
+    s.justCalc = false;
+    s.current = '0';
+    updateDisplay(); return;
+  }
+
+  if (btn === '.') {
+    if (s.justCalc) { s.current = '0.'; s.justCalc = false; updateDisplay(); return; }
+    if (!s.current.includes('.')) s.current += '.';
+    updateDisplay(); return;
+  }
+
+  // Digit
+  if (s.justCalc) { s.current = btn; s.justCalc = false; }
+  else if (s.current === '0') s.current = btn;
+  else if (s.current.length < 15) s.current += btn;
+  updateDisplay();
+}
+
+// Keyboard support
+document.addEventListener('keydown', e => {
+  const map = {
+    '0':'0','1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9',
+    '.':'.','Enter':'=','=':'=','Backspace':'DEL','Escape':'AC',
+    '+':'+','-':'-','*':'×','/':'÷','%':'%'
+  };
+  if (e.key === 'Backspace') {
+    if (calcState.current.length > 1) calcState.current = calcState.current.slice(0,-1);
+    else calcState.current = '0';
+    updateDisplay();
+  } else if (map[e.key]) calcAction(map[e.key]);
+});
+
+
+// ===== TIC TAC TOE =====
+let board = Array(9).fill(null);
+let currentPlayer = 'X';
+let gameOver = false;
+let scores = { X: 0, O: 0, tie: 0 };
+let vsAI = true;
+const WINS = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+function setMode(mode) {
+  vsAI = mode === 'ai';
+  document.getElementById('mode-ai').classList.toggle('active', vsAI);
+  document.getElementById('mode-2p').classList.toggle('active', !vsAI);
+  document.getElementById('o-label').textContent = vsAI ? 'AI' : 'PLAYER';
+  resetGame();
+}
+
+function cellClick(i) {
+  if (gameOver || board[i]) return;
+  if (vsAI && currentPlayer === 'O') return;
+  makeMove(i, currentPlayer);
+}
+
+function makeMove(i, player) {
+  board[i] = player;
+  const cell = document.getElementById('c' + i);
+  cell.textContent = player;
+  cell.classList.add(player.toLowerCase(), 'taken', 'cell-enter');
+
+  const winner = checkWinner();
+  if (winner) {
+    highlightWin(winner.combo);
+    if (winner.player === 'tie') {
+      scores.tie++;
+      document.getElementById('score-tie-val').textContent = scores.tie;
+      setStatus('DRAW!', 'draw');
+    } else {
+      scores[winner.player]++;
+      document.getElementById(`score-${winner.player.toLowerCase()}-val`).textContent = scores[winner.player];
+      const who = vsAI && winner.player === 'O' ? 'AI WINS! 🤖' : `${winner.player} WINS! 🎉`;
+      setStatus(who, 'win');
+    }
+    gameOver = true; return;
+  }
+
+  currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+  updateActiveScore();
+
+  if (vsAI && currentPlayer === 'O') {
+    setStatus("AI is thinking...", '');
+    setTimeout(() => {
+      const move = getBestMove();
+      makeMove(move, 'O');
+    }, 320);
+  } else {
+    setStatus(`${currentPlayer}'s turn`,'');
+  }
+}
+
+function setStatus(msg, cls) {
+  const s = document.getElementById('status');
+  s.textContent = msg;
+  s.className = 'status-bar';
+  if (cls) s.classList.add(cls);
+}
+
+function updateActiveScore() {
+  document.getElementById('score-x').classList.toggle('active', currentPlayer === 'X');
+  document.getElementById('score-o').classList.toggle('active', currentPlayer === 'O');
+}
+
+function checkWinner() {
+  for (const combo of WINS) {
+    const [a,b,c] = combo;
+    if (board[a] && board[a] === board[b] && board[b] === board[c])
+      return { player: board[a], combo };
+  }
+  if (board.every(c => c)) return { player: 'tie', combo: [] };
+  return null;
+}
+
+function highlightWin(combo) {
+  combo.forEach(i => document.getElementById('c'+i).classList.add('winning'));
+}
+
+// Minimax AI
+function getBestMove() {
+  let best = -Infinity, move = -1;
+  for (let i = 0; i < 9; i++) {
+    if (!board[i]) {
+      board[i] = 'O';
+      const score = minimax(board, 0, false);
+      board[i] = null;
+      if (score > best) { best = score; move = i; }
+    }
+  }
+  return move;
+}
+
+function minimax(b, depth, isMax) {
+  const winner = checkWinnerBoard(b);
+  if (winner === 'O') return 10 - depth;
+  if (winner === 'X') return depth - 10;
+  if (b.every(c => c)) return 0;
+  if (isMax) {
+    let best = -Infinity;
+    for (let i = 0; i < 9; i++) {
+      if (!b[i]) {
+        b[i] = 'O';
+        best = Math.max(best, minimax(b, depth+1, false));
+        b[i] = null;
+      }
+    }
+    return best;
+  } else {
+    let best = Infinity;
+    for (let i = 0; i < 9; i++) {
+      if (!b[i]) {
+        b[i] = 'X';
+        best = Math.min(best, minimax(b, depth+1, true));
+        b[i] = null;
+      }
+    }
+    return best;
+  }
+}
+
+function checkWinnerBoard(b) {
+  for (const [a,c,d] of WINS) {
+    if (b[a] && b[a] === b[c] && b[c] === b[d]) return b[a];
+  }
+  return null;
+}
+
+function resetGame() {
+  board = Array(9).fill(null);
+  currentPlayer = 'X';
+  gameOver = false;
+  for (let i = 0; i < 9; i++) {
+    const c = document.getElementById('c'+i);
+    c.textContent = '';
+    c.className = 'cell';
+  }
+  document.getElementById('score-x').classList.remove('active');
+  document.getElementById('score-o').classList.remove('active');
+  document.getElementById('score-x').classList.add('active');
+  setStatus("X's turn", '');
+}
+
+// Init
+updateDisplay();
+</script>
 </body>
 </html>
