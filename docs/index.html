@@ -1,132 +1,423 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>My Food Blog</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Calculator & Tic Tac Toe</title>
 <style>
-body,h1,h2,h3,h4,h5,h6 {font-family: "Karma", sans-serif}
-.w3-bar-block .w3-bar-item {padding:20px}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f4f4f0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    color: #1a1a1a;
+  }
+
+  h1 {
+    font-size: 18px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.03em;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    max-width: 700px;
+  }
+
+  @media (max-width: 600px) {
+    .app { grid-template-columns: 1fr; }
+  }
+
+  /* ── CALCULATOR ── */
+  .calc-card {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #e0ddd6;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .calc-display {
+    background: #f8f7f3;
+    padding: 16px 18px 12px;
+    text-align: right;
+    border-bottom: 1px solid #e0ddd6;
+  }
+
+  .calc-expr {
+    font-size: 13px;
+    color: #999;
+    min-height: 18px;
+    word-break: break-all;
+  }
+
+  .calc-main {
+    font-size: 32px;
+    font-weight: 500;
+    color: #1a1a1a;
+    word-break: break-all;
+    line-height: 1.2;
+    margin-top: 4px;
+  }
+
+  .calc-btns {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: #e0ddd6;
+  }
+
+  .cb {
+    height: 54px;
+    font-size: 16px;
+    font-weight: 400;
+    border: none;
+    cursor: pointer;
+    background: #fff;
+    color: #1a1a1a;
+    transition: background 0.1s;
+    font-family: inherit;
+  }
+
+  .cb:hover { background: #f8f7f3; }
+  .cb:active { background: #edecea; transform: scale(0.97); }
+
+  .cb.op   { color: #185FA5; font-weight: 500; }
+  .cb.fn   { background: #f8f7f3; color: #666; font-size: 14px; }
+  .cb.fn:hover { background: #edecea; }
+
+  .cb.eq {
+    background: #185FA5;
+    color: #fff;
+    font-size: 20px;
+  }
+  .cb.eq:hover  { background: #1a6ab8; }
+  .cb.eq:active { background: #0C447C; }
+
+  .cb.span2 { grid-column: span 2; }
+
+  /* ── TIC TAC TOE ── */
+  .ttt-card {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #e0ddd6;
+    padding: 20px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .ttt-heading {
+    font-size: 13px;
+    font-weight: 500;
+    color: #999;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .score-row {
+    display: flex;
+    gap: 12px;
+  }
+
+  .score-box {
+    text-align: center;
+    background: #f8f7f3;
+    border-radius: 10px;
+    padding: 6px 16px;
+    min-width: 60px;
+  }
+
+  .score-val { font-size: 20px; font-weight: 500; }
+  .score-lbl { font-size: 11px; color: #999; margin-top: 2px; }
+
+  .ttt-status {
+    font-size: 15px;
+    font-weight: 500;
+    color: #1a1a1a;
+    min-height: 22px;
+  }
+
+  .ttt-board {
+    display: grid;
+    grid-template-columns: repeat(3, 64px);
+    grid-template-rows: repeat(3, 64px);
+    gap: 6px;
+  }
+
+  .ttt-cell {
+    width: 64px;
+    height: 64px;
+    background: #f8f7f3;
+    border: 1px solid #e0ddd6;
+    border-radius: 10px;
+    font-size: 26px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.1s;
+    user-select: none;
+  }
+
+  .ttt-cell:hover:not(.taken) {
+    background: #fff;
+    border-color: #bbb;
+  }
+
+  .ttt-cell.x    { color: #185FA5; }
+  .ttt-cell.o    { color: #D85A30; }
+  .ttt-cell.win  { background: #dbeeff; border-color: #7ab8f5; }
+  .ttt-cell.taken { cursor: default; }
+
+  .ttt-reset {
+    font-size: 13px;
+    padding: 7px 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: transparent;
+    color: #666;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.1s;
+  }
+
+  .ttt-reset:hover { background: #f8f7f3; }
 </style>
 </head>
 <body>
 
-<!-- Sidebar (hidden by default) -->
-<nav class="w3-sidebar w3-bar-block w3-card w3-top w3-xlarge w3-animate-left" style="display:none;z-index:2;width:40%;min-width:300px" id="mySidebar">
-  <a href="javascript:void(0)" onclick="w3_close()"
-  class="w3-bar-item w3-button">Close Menu</a>
-  <a href="#food" onclick="w3_close()" class="w3-bar-item w3-button">Food</a>
-  <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button">About</a>
-</nav>
+<h1>Calculator & Tic Tac Toe</h1>
 
-<!-- Top menu -->
-<div class="w3-top">
-  <div class="w3-white w3-xlarge" style="max-width:1200px;margin:auto">
-    <div class="w3-button w3-padding-16 w3-left" onclick="w3_open()">☰</div>
-    <div class="w3-right w3-padding-16">Mail</div>
-    <div class="w3-center w3-padding-16">My Food</div>
-  </div>
-</div>
-  
-<!-- !PAGE CONTENT! -->
-<div class="w3-main w3-content w3-padding" style="max-width:1200px;margin-top:100px">
+<div class="app">
 
-  <!-- First Photo Grid-->
-  <div class="w3-row-padding w3-padding-16 w3-center" id="food">
-    <div class="w3-quarter">
-      <img src="https://vaya.in/recipes/wp-content/uploads/2018/06/Club-sandwich.jpg" alt="Sandwich" style="width:100%">
-      <h3>The Perfect Sandwich, A Real NYC Classic</h3>
+  <!-- CALCULATOR -->
+  <div class="calc-card">
+    <div class="calc-display">
+      <div class="calc-expr" id="expr"></div>
+      <div class="calc-main" id="disp">0</div>
     </div>
-    <div class="w3-quarter">
-      <img src="https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/53BGPNAB6YI63C7LFNHEQGYVAA.jpg" alt="Steak" style="width:100%">
-      <h3>Let Me Tell You About This Steak</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://blog.lexmed.com/images/librariesprovider80/blog-post-featured-images/shutterstock_1933299218.jpg?sfvrsn=4a8d900b_0" alt="Cherries" style="width:100%">
-      <h3>Cherries, interrupted</h3>
-      <p>What else?</p>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://www.acouplecooks.com/wp-content/uploads/2023/01/Red-Sauce-Pasta-008.jpg" alt="Pasta and Wine" style="width:100%">
-      <h3>Once Again, Robust Wine and Vegetable Pasta</h3>
-    </div>
-  </div>
-  
-  <!-- Second Photo Grid-->
-  <div class="w3-row-padding w3-padding-16 w3-center">
-    <div class="w3-quarter">
-      <img src="https://feelgoodfoodie.net/wp-content/uploads/2022/04/How-to-Make-Popsicles-15.jpg" alt="Popsicle" style="width:100%">
-      <h3>All I Need Is a Popsicle</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://www.wholesomeyum.com/wp-content/uploads/2021/07/wholesomeyum-Pan-Seared-Salmon-12.jpg" alt="Salmon" style="width:100%">
-      <h3>Salmon For Your Skin</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Desserts.jpg/640px-Desserts.jpg" alt="Sandwich" style="width:100%">
-      <h3>The Perfect Dessert</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://www.simplejoy.com/wp-content/uploads/2021/04/Croissant-French-Toast-5.jpg" alt="Croissant" style="width:100%">
-      <h3>Le French</h3>
+    <div class="calc-btns">
+      <button class="cb fn" data-a="clear">AC</button>
+      <button class="cb fn" data-a="sign">+/−</button>
+      <button class="cb fn" data-a="pct">%</button>
+      <button class="cb op" data-a="op" data-v="÷">÷</button>
+
+      <button class="cb" data-a="num" data-v="7">7</button>
+      <button class="cb" data-a="num" data-v="8">8</button>
+      <button class="cb" data-a="num" data-v="9">9</button>
+      <button class="cb op" data-a="op" data-v="×">×</button>
+
+      <button class="cb" data-a="num" data-v="4">4</button>
+      <button class="cb" data-a="num" data-v="5">5</button>
+      <button class="cb" data-a="num" data-v="6">6</button>
+      <button class="cb op" data-a="op" data-v="−">−</button>
+
+      <button class="cb" data-a="num" data-v="1">1</button>
+      <button class="cb" data-a="num" data-v="2">2</button>
+      <button class="cb" data-a="num" data-v="3">3</button>
+      <button class="cb op" data-a="op" data-v="+">+</button>
+
+      <button class="cb span2" data-a="num" data-v="0">0</button>
+      <button class="cb" data-a="dot">.</button>
+      <button class="cb eq" data-a="eq">=</button>
     </div>
   </div>
 
-  <!-- Pagination -->
-  <div class="w3-center w3-padding-32">
-    <div class="w3-bar">
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">«</a>
-      <a href="#" class="w3-bar-item w3-black w3-button">1</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">2</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">3</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">4</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">»</a>
+  <!-- TIC TAC TOE -->
+  <div class="ttt-card">
+    <div class="ttt-heading">Tic Tac Toe</div>
+
+    <div class="score-row">
+      <div class="score-box">
+        <div class="score-val" id="sx" style="color:#185FA5">0</div>
+        <div class="score-lbl">X wins</div>
+      </div>
+      <div class="score-box">
+        <div class="score-val" id="sd" style="color:#999">0</div>
+        <div class="score-lbl">Draws</div>
+      </div>
+      <div class="score-box">
+        <div class="score-val" id="so" style="color:#D85A30">0</div>
+        <div class="score-lbl">O wins</div>
+      </div>
     </div>
+
+    <div class="ttt-status" id="ttt-status">X's turn</div>
+
+    <div class="ttt-board" id="board">
+      <div class="ttt-cell" data-i="0"></div>
+      <div class="ttt-cell" data-i="1"></div>
+      <div class="ttt-cell" data-i="2"></div>
+      <div class="ttt-cell" data-i="3"></div>
+      <div class="ttt-cell" data-i="4"></div>
+      <div class="ttt-cell" data-i="5"></div>
+      <div class="ttt-cell" data-i="6"></div>
+      <div class="ttt-cell" data-i="7"></div>
+      <div class="ttt-cell" data-i="8"></div>
+    </div>
+
+    <button class="ttt-reset" id="ttt-reset">New game</button>
   </div>
-  
-  <hr id="about">
 
-  <!-- About Section -->
-  <div class="w3-container w3-padding-32 w3-center">  
-    <h3>About Me, The Food Man</h3><br>
-    <img src="https://www.cordonbleu.edu/Files/MediaFile/58300.jpg" alt="Me" class="w3-image" style="display:block;margin:auto" width="800" height="533">
-    <div class="w3-padding-32">
-      <h4><b>I am Who I Am!</b></h4>
-      <h6><i>With Passion For Real, Good Food</i></h6>
-      <p>Just me, myself and I, exploring the universe of unknownment. I have a heart of love and an interest on food blog. I want to share my world with you.</p>
-    </div>
-  </div>
-  <hr>
-  
-  <!-- Footer -->
-  <footer class="w3-row-padding w3-padding-32">
-
-    <div class="w3-third w3-serif">
-      <h3>POPULAR TAGS</h3>
-      <p>
-        <span class="w3-tag w3-black w3-margin-bottom">Travel</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">New York</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Dinner</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Salmon</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">France</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Drinks</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Ideas</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Flavors</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Cuisine</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Chicken</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Dressing</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Fried</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Fish</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Duck</span>
-      </p>
-    </div>
-  </footer>
-
-<!-- End page content -->
 </div>
 
 <script>
-// Script to open and close sidebar
-function w3_open() {
-  document.getElementById("mySidebar").style.display = "block";
+// ════════════════════════════════
+//  CALCULATOR
+// ════════════════════════════════
+let cur = '0', prev = null, op = null, justEq = false;
+const dispEl = document.getElementById('disp');
+const exprEl = document.getElementById('expr');
+
+function fmt(n) {
+  if (!isFinite(n)) return 'Error';
+  let s = parseFloat(n.toPrecision(12)).toString();
+  if (s.length > 14) s = parseFloat(n.toPrecision(9)).toExponential();
+  return s;
 }
- 
-function w3_close() {
-  document.getElementById("mySidebar").style.display = "none";
+
+function renderCalc() {
+  dispEl.textContent = cur;
 }
+
+document.querySelector('.calc-btns').addEventListener('click', function(e) {
+  const btn = e.target.closest('[data-a]');
+  if (!btn) return;
+  const a = btn.dataset.a;
+  const v = btn.dataset.v;
+
+  if (a === 'clear') {
+    cur = '0'; prev = null; op = null; justEq = false;
+    exprEl.textContent = '';
+
+  } else if (a === 'num') {
+    if (justEq) { cur = v; justEq = false; }
+    else cur = (cur === '0' && v !== '.') ? v : (cur.length < 12 ? cur + v : cur);
+
+  } else if (a === 'dot') {
+    if (justEq) { cur = '0.'; justEq = false; }
+    else if (!cur.includes('.')) cur += '.';
+
+  } else if (a === 'sign') {
+    if (cur !== '0') cur = cur.startsWith('-') ? cur.slice(1) : '-' + cur;
+
+  } else if (a === 'pct') {
+    cur = fmt(parseFloat(cur) / 100);
+
+  } else if (a === 'op') {
+    if (op && prev !== null && !justEq) {
+      const r = calculate(parseFloat(prev), parseFloat(cur), op);
+      cur = fmt(r);
+    }
+    op = v; prev = cur; cur = '0'; justEq = false;
+    exprEl.textContent = prev + ' ' + op;
+
+  } else if (a === 'eq') {
+    if (op && prev !== null) {
+      exprEl.textContent = prev + ' ' + op + ' ' + cur + ' =';
+      const r = calculate(parseFloat(prev), parseFloat(cur), op);
+      cur = fmt(r);
+      prev = null; op = null; justEq = true;
+    }
+  }
+
+  renderCalc();
+});
+
+function calculate(a, b, op) {
+  switch (op) {
+    case '+': return a + b;
+    case '−': return a - b;
+    case '×': return a * b;
+    case '÷': return b !== 0 ? a / b : NaN;
+    default:  return b;
+  }
+}
+
+// ════════════════════════════════
+//  TIC TAC TOE
+// ════════════════════════════════
+const WIN_LINES = [
+  [0,1,2],[3,4,5],[6,7,8],
+  [0,3,6],[1,4,7],[2,5,8],
+  [0,4,8],[2,4,6]
+];
+
+let board = Array(9).fill(null);
+let turn  = 'X';
+let over  = false;
+let score = { X: 0, O: 0, D: 0 };
+
+const cells    = document.querySelectorAll('.ttt-cell');
+const statusEl = document.getElementById('ttt-status');
+
+cells.forEach(function(cell) {
+  cell.addEventListener('click', function() {
+    const i = parseInt(cell.dataset.i);
+    if (over || board[i]) return;
+
+    board[i] = turn;
+    cell.textContent = turn;
+    cell.classList.add(turn.toLowerCase(), 'taken');
+
+    const winLine = getWinLine();
+    if (winLine) {
+      winLine.forEach(function(idx) { cells[idx].classList.add('win'); });
+      statusEl.textContent = turn + ' wins! 🎉';
+      score[turn]++;
+      updateScore();
+      over = true;
+    } else if (board.every(Boolean)) {
+      statusEl.textContent = "It's a draw!";
+      score.D++;
+      updateScore();
+      over = true;
+    } else {
+      turn = turn === 'X' ? 'O' : 'X';
+      statusEl.textContent = turn + "'s turn";
+    }
+  });
+});
+
+function getWinLine() {
+  for (var i = 0; i < WIN_LINES.length; i++) {
+    var line = WIN_LINES[i];
+    var a = line[0], b = line[1], c = line[2];
+    if (board[a] && board[a] === board[b] && board[a] === board[c]) return line;
+  }
+  return null;
+}
+
+function updateScore() {
+  document.getElementById('sx').textContent = score.X;
+  document.getElementById('so').textContent = score.O;
+  document.getElementById('sd').textContent = score.D;
+}
+
+document.getElementById('ttt-reset').addEventListener('click', function() {
+  board = Array(9).fill(null);
+  turn  = 'X';
+  over  = false;
+  cells.forEach(function(c) {
+    c.textContent = '';
+    c.className = 'ttt-cell';
+  });
+  statusEl.textContent = "X's turn";
+});
 </script>
 
 </body>
