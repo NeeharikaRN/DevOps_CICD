@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculator + Tic Tac Toe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0f0f0f;--surface:#1a1a1a;--surface2:#242424;--border:#2e2e2e;
+    --text:#f0f0f0;--muted:#888;--accent:#e8ff3c;--accent2:#3cffb4;
+    --danger:#ff5c5c;--btn:#2a2a2a;--btn-hover:#333;
+  }
+  body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}
+  .container{width:100%;max-width:760px;display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  @media(max-width:580px){.container{grid-template-columns:1fr}}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem;display:flex;flex-direction:column;gap:0.75rem}
+  .panel-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+
+  /* CALCULATOR */
+  .calc-display{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:0.75rem 1rem;min-height:72px;display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-end;gap:2px;overflow:hidden}
+  .calc-expr{font-size:12px;color:var(--muted);min-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .calc-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--accent);line-height:1.1;word-break:break-all}
+  .calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .cbtn{background:var(--btn);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Mono',monospace;font-size:14px;font-weight:500;padding:10px 4px;cursor:pointer;transition:background 0.1s,transform 0.1s;user-select:none}
+  .cbtn:hover{background:var(--btn-hover)}
+  .cbtn:active{transform:scale(0.94)}
+  .cbtn.op{color:var(--accent)}
+  .cbtn.eq{background:var(--accent);color:#000;font-weight:700;border-color:var(--accent)}
+  .cbtn.eq:hover{background:#d4e830}
+  .cbtn.clear{color:var(--danger)}
+  .cbtn.zero{grid-column:span 2}
+
+  /* TIC TAC TOE */
+  .ttt-status{font-size:13px;color:var(--muted);min-height:20px}
+  .ttt-status span.x{color:var(--accent)}
+  .ttt-status span.o{color:var(--accent2)}
+  .ttt-board{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .ttt-cell{background:var(--surface2);border:1px solid var(--border);border-radius:8px;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:26px;font-weight:800;cursor:pointer;transition:background 0.1s,transform 0.1s;user-select:none}
+  .ttt-cell:hover:not(.taken){background:var(--btn-hover);transform:scale(1.03)}
+  .ttt-cell.x{color:var(--accent)}
+  .ttt-cell.o{color:var(--accent2)}
+  .ttt-cell.win{background:#1e2a1a;border-color:var(--accent2)}
+  .ttt-cell.taken{cursor:default}
+  .ttt-scores{display:flex;gap:6px}
+  .score-box{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 8px;text-align:center}
+  .score-box .slabel{font-size:10px;color:var(--muted);display:block}
+  .score-box .sval{font-family:'Syne',sans-serif;font-size:18px;font-weight:700}
+  .score-box.sx .sval{color:var(--accent)}
+  .score-box.so .sval{color:var(--accent2)}
+  .score-box.sd .sval{color:var(--muted)}
+  .reset-btn{background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;padding:6px 10px;cursor:pointer;transition:all 0.1s}
+  .reset-btn:hover{border-color:var(--muted);color:var(--text)}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- CALCULATOR -->
+  <div class="panel">
+    <div class="panel-title">Calculator</div>
+    <div class="calc-display">
+      <div class="calc-expr" id="expr"></div>
+      <div class="calc-val" id="val">0</div>
+    </div>
+    <div class="calc-grid">
+      <button class="cbtn clear" onclick="calcAC()">AC</button>
+      <button class="cbtn op" onclick="calcSign()">+/-</button>
+      <button class="cbtn op" onclick="calcPct()">%</button>
+      <button class="cbtn op" onclick="calcOp('/')">÷</button>
+
+      <button class="cbtn" onclick="calcNum('7')">7</button>
+      <button class="cbtn" onclick="calcNum('8')">8</button>
+      <button class="cbtn" onclick="calcNum('9')">9</button>
+      <button class="cbtn op" onclick="calcOp('*')">×</button>
+
+      <button class="cbtn" onclick="calcNum('4')">4</button>
+      <button class="cbtn" onclick="calcNum('5')">5</button>
+      <button class="cbtn" onclick="calcNum('6')">6</button>
+      <button class="cbtn op" onclick="calcOp('-')">−</button>
+
+      <button class="cbtn" onclick="calcNum('1')">1</button>
+      <button class="cbtn" onclick="calcNum('2')">2</button>
+      <button class="cbtn" onclick="calcNum('3')">3</button>
+      <button class="cbtn op" onclick="calcOp('+')">+</button>
+
+      <button class="cbtn zero" onclick="calcNum('0')">0</button>
+      <button class="cbtn" onclick="calcDot()">.</button>
+      <button class="cbtn eq" onclick="calcEq()">=</button>
+    </div>
+  </div>
+
+  <!-- TIC TAC TOE -->
+  <div class="panel">
+    <div class="panel-title">Tic Tac Toe</div>
+    <div class="ttt-scores">
+      <div class="score-box sx"><span class="slabel">X</span><span class="sval" id="sx">0</span></div>
+      <div class="score-box sd"><span class="slabel">Draw</span><span class="sval" id="sd">0</span></div>
+      <div class="score-box so"><span class="slabel">O</span><span class="sval" id="so">0</span></div>
+    </div>
+    <div class="ttt-status" id="ttt-status"><span class="x">X</span>'s turn</div>
+    <div class="ttt-board" id="ttt-board">
+      <div class="ttt-cell" onclick="tttMove(0)" id="c0"></div>
+      <div class="ttt-cell" onclick="tttMove(1)" id="c1"></div>
+      <div class="ttt-cell" onclick="tttMove(2)" id="c2"></div>
+      <div class="ttt-cell" onclick="tttMove(3)" id="c3"></div>
+      <div class="ttt-cell" onclick="tttMove(4)" id="c4"></div>
+      <div class="ttt-cell" onclick="tttMove(5)" id="c5"></div>
+      <div class="ttt-cell" onclick="tttMove(6)" id="c6"></div>
+      <div class="ttt-cell" onclick="tttMove(7)" id="c7"></div>
+      <div class="ttt-cell" onclick="tttMove(8)" id="c8"></div>
+    </div>
+    <button class="reset-btn" onclick="tttReset()">reset board</button>
+  </div>
+
+</div>
+
+<script>
+  // ── CALCULATOR ──
+  let cv = '0', ce = '', cop = null, cfresh = true, cjust = false;
+
+  function updCalc() {
+    document.getElementById('val').textContent = cv;
+    document.getElementById('expr').textContent = ce;
+  }
+
+  function calcAC() { cv = '0'; ce = ''; cop = null; cfresh = true; cjust = false; updCalc(); }
+
+  function calcSign() {
+    if (cv === '0') return;
+    cv = cv.startsWith('-') ? cv.slice(1) : '-' + cv;
+    updCalc();
+  }
+
+  function calcPct() { cv = String(parseFloat(cv) / 100); updCalc(); }
+
+  function calcNum(d) {
+    if (cjust) { cv = d; cjust = false; }
+    else cv = (cfresh || cv === '0' && d !== '.') ? d : (cv.length < 12 ? cv + d : cv);
+    cfresh = false;
+    updCalc();
+  }
+
+  function calcDot() {
+    if (cjust) { cv = '0.'; cjust = false; updCalc(); return; }
+    if (!cv.includes('.')) cv += '.';
+    cfresh = false;
+    updCalc();
+  }
+
+  function calcOp(op) {
+    if (cop && !cjust) calcEq();
+    ce = cv + ' ' + { '+': '+', '-': '−', '*': '×', '/': '÷' }[op] + ' ';
+    cop = op; cjust = true;
+    updCalc();
+  }
+
+  function calcEq() {
+    if (!cop) return;
+    let a = parseFloat(ce), b = parseFloat(cv), r;
+    if (cop === '+') r = a + b;
+    else if (cop === '-') r = a - b;
+    else if (cop === '*') r = a * b;
+    else if (cop === '/') r = b === 0 ? 'Error' : a / b;
+    cv = r === 'Error' ? 'Error' : String(parseFloat(r.toFixed(10)));
+    ce = ce + cv + ' =';
+    cop = null; cfresh = true; cjust = false;
+    updCalc();
+  }
+
+  // ── TIC TAC TOE ──
+  let tb = Array(9).fill(null), turn = 'X', over = false, scores = { X: 0, O: 0, D: 0 };
+  const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+  function tttMove(i) {
+    if (over || tb[i]) return;
+    tb[i] = turn;
+    const el = document.getElementById('c' + i);
+    el.textContent = turn;
+    el.classList.add(turn.toLowerCase(), 'taken');
+    const w = wins.find(l => l.every(x => tb[x] === turn));
+    if (w) {
+      w.forEach(x => document.getElementById('c' + x).classList.add('win'));
+      scores[turn]++;
+      document.getElementById('s' + turn.toLowerCase()).textContent = scores[turn];
+      document.getElementById('ttt-status').innerHTML = `<span class="${turn.toLowerCase()}">${turn}</span> wins!`;
+      over = true; return;
+    }
+    if (tb.every(Boolean)) {
+      scores.D++;
+      document.getElementById('sd').textContent = scores.D;
+      document.getElementById('ttt-status').textContent = 'Draw!';
+      over = true; return;
+    }
+    turn = turn === 'X' ? 'O' : 'X';
+    document.getElementById('ttt-status').innerHTML = `<span class="${turn.toLowerCase()}">${turn}</span>'s turn`;
+  }
+
+  function tttReset() {
+    tb = Array(9).fill(null); turn = 'X'; over = false;
+    for (let i = 0; i < 9; i++) {
+      const el = document.getElementById('c' + i);
+      el.textContent = ''; el.className = 'ttt-cell';
+    }
+    document.getElementById('ttt-status').innerHTML = `<span class="x">X</span>'s turn`;
+  }
+</script>
+
+</body>
+</html>
