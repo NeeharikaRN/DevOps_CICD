@@ -1,4 +1,4 @@
-name: CI/CD for Static Site with GitHub Pages
+name: CI/CD for Static Site with GitHub Page
 
 on:
   push:
