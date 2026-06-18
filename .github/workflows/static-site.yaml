@@ -1,5 +1,6 @@
 name: CI/CD for Static Site with GitHub Pages
 
+
 on:
   push:
     branches: [ main ]
