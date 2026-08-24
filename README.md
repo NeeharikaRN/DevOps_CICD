@@ -1,1 +1,1 @@
-demo - simple edit
+demo - simple edit trigger
