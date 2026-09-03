@@ -1,1 +1,1 @@
-demo - simple edit trigger
+demo - simple edit trigger CI/CD
