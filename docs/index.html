@@ -1,133 +1,736 @@
+```html
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<title>My Food Blog</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">
-<style>
-body,h1,h2,h3,h4,h5,h6 {font-family: "Karma", sans-serif}
-.w3-bar-block .w3-bar-item {padding:20px}
-</style>
+    <meta charset="UTF-8">
+
+    <!-- Makes the website responsive on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Anand Kasaudhan | Portfolio</title>
+
+    <style>
+        /* =========================
+           GENERAL STYLES
+        ========================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+
+        /* =========================
+           NAVBAR
+        ========================== */
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: #0f172a;
+            border-bottom: 1px solid #334155;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #38bdf8;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: #cbd5e1;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #38bdf8;
+        }
+
+
+        /* =========================
+           HERO SECTION
+        ========================== */
+
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-content {
+            max-width: 750px;
+        }
+
+        .hero h1 {
+            font-size: 55px;
+            margin-bottom: 10px;
+        }
+
+        .hero h1 span {
+            color: #38bdf8;
+        }
+
+        .hero h2 {
+            color: #94a3b8;
+            font-size: 25px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            color: #cbd5e1;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .primary-btn {
+            background: #38bdf8;
+            color: #0f172a;
+        }
+
+        .primary-btn:hover {
+            background: #0ea5e9;
+        }
+
+        .secondary-btn {
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+        }
+
+        .secondary-btn:hover {
+            background: #38bdf8;
+            color: #0f172a;
+        }
+
+
+        /* =========================
+           SECTIONS
+        ========================== */
+
+        section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 35px;
+            margin-bottom: 50px;
+            color: #38bdf8;
+        }
+
+
+        /* =========================
+           ABOUT
+        ========================== */
+
+        .about p {
+            max-width: 800px;
+            margin: auto;
+            text-align: center;
+            color: #cbd5e1;
+            font-size: 18px;
+        }
+
+
+        /* =========================
+           SKILLS
+        ========================== */
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .skill {
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 12px 20px;
+            border-radius: 25px;
+            color: #cbd5e1;
+            transition: 0.3s;
+        }
+
+        .skill:hover {
+            border-color: #38bdf8;
+            transform: translateY(-3px);
+        }
+
+
+        /* =========================
+           PROJECTS
+        ========================== */
+
+        .projects {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .project-card {
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            transition: 0.3s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            border-color: #38bdf8;
+        }
+
+        .project-card h3 {
+            color: #38bdf8;
+            margin-bottom: 12px;
+        }
+
+        .project-card p {
+            color: #cbd5e1;
+            margin-bottom: 15px;
+        }
+
+        .tech {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           EDUCATION
+        ========================== */
+
+        .education-card {
+            background: #1e293b;
+            padding: 25px;
+            border-left: 4px solid #38bdf8;
+            margin-bottom: 20px;
+        }
+
+        .education-card h3 {
+            color: #38bdf8;
+        }
+
+        .education-card p {
+            color: #cbd5e1;
+        }
+
+
+        /* =========================
+           ACHIEVEMENTS
+        ========================== */
+
+        .achievements {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .achievement {
+            background: #1e293b;
+            padding: 18px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+
+
+        /* =========================
+           CONTACT
+        ========================== */
+
+        .contact {
+            text-align: center;
+        }
+
+        .contact p {
+            color: #cbd5e1;
+            margin-bottom: 10px;
+        }
+
+        .contact-links {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .contact-links a {
+            color: #38bdf8;
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================== */
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+        }
+
+
+        /* =========================
+           MOBILE RESPONSIVENESS
+        ========================== */
+
+        @media (max-width: 768px) {
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 40px;
+            }
+
+            .hero h2 {
+                font-size: 20px;
+            }
+
+            .projects {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons {
+                flex-direction: column;
+                width: 200px;
+            }
+        }
+    </style>
 </head>
+
+
 <body>
 
-<!-- Sidebar (hidden by default) -->
-<nav class="w3-sidebar w3-bar-block w3-card w3-top w3-xlarge w3-animate-left" style="display:none;z-index:2;width:40%;min-width:300px" id="mySidebar">
-  <a href="javascript:void(0)" onclick="w3_close()"
-  class="w3-bar-item w3-button">Close Menu</a>
-  <a href="#food" onclick="w3_close()" class="w3-bar-item w3-button">Food</a>
-  <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button">About</a>
-</nav>
+    <!-- =========================
+         NAVIGATION BAR
+    ========================== -->
 
-<!-- Top menu -->
-<div class="w3-top">
-  <div class="w3-white w3-xlarge" style="max-width:1200px;margin:auto">
-    <div class="w3-button w3-padding-16 w3-left" onclick="w3_open()">☰</div>
-    <div class="w3-right w3-padding-16">Mail</div>
-    <div class="w3-center w3-padding-16">Neeha Food Blog</div>
-  </div>
-</div>
-  
-<!-- !PAGE CONTENT! -->
-<div class="w3-main w3-content w3-padding" style="max-width:1200px;margin-top:100px">
+    <header>
+        <div class="container">
 
-  <!-- First Photo Grid-->
-  <div class="w3-row-padding w3-padding-16 w3-center" id="food">
-    <div class="w3-quarter">
-      <img src="https://vaya.in/recipes/wp-content/uploads/2018/06/Club-sandwich.jpg" alt="Sandwich" style="width:100%">
-      <h3>A Real NYC Classic</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/53BGPNAB6YI63C7LFNHEQGYVAA.jpg" alt="Steak" style="width:100%">
-      <h3>Let Me Tell You About This Steak</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://blog.lexmed.com/images/librariesprovider80/blog-post-featured-images/shutterstock_1933299218.jpg?sfvrsn=4a8d900b_0" alt="Cherries" style="width:100%">
-      <h3>Cherries, interrupted</h3>
-      <p>What else?</p>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://www.acouplecooks.com/wp-content/uploads/2023/01/Red-Sauce-Pasta-008.jpg" alt="Pasta and Wine" style="width:100%">
-      <h3>Once Again, Robust Wine and Vegetable Pasta</h3>
-    </div>
-  </div>
-  
-  <!-- Second Photo Grid-->
-  <div class="w3-row-padding w3-padding-16 w3-center">
-    <div class="w3-quarter">
-      <img src="https://feelgoodfoodie.net/wp-content/uploads/2022/04/How-to-Make-Popsicles-15.jpg" alt="Popsicle" style="width:100%">
-      <h3>All I Need Is a Popsicle</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://www.wholesomeyum.com/wp-content/uploads/2021/07/wholesomeyum-Pan-Seared-Salmon-12.jpg" alt="Salmon" style="width:100%">
-      <h3>Salmon For Your Skin</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Desserts.jpg/640px-Desserts.jpg" alt="Sandwich" style="width:100%">
-      <h3>The Perfect Dessert</h3>
-    </div>
-    <div class="w3-quarter">
-      <img src="https://www.simplejoy.com/wp-content/uploads/2021/04/Croissant-French-Toast-5.jpg" alt="Croissant" style="width:100%">
-      <h3>Le French</h3>
-    </div>
-  </div>
+            <nav>
 
-  <!-- Pagination -->
-  <div class="w3-center w3-padding-32">
-    <div class="w3-bar">
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">«</a>
-      <a href="#" class="w3-bar-item w3-black w3-button">1</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">2</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">3</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">4</a>
-      <a href="#" class="w3-bar-item w3-button w3-hover-black">»</a>
-    </div>
-  </div>
-  
-  <hr id="about">
+                <div class="logo">
+                    Anand.
+                </div>
 
-  <!-- About Section -->
-  <div class="w3-container w3-padding-32 w3-center">  
-    <h3>About Me, The Food Man</h3><br>
-    <img src="https://www.cordonbleu.edu/Files/MediaFile/58300.jpg" alt="Me" class="w3-image" style="display:block;margin:auto" width="800" height="533">
-    <div class="w3-padding-32">
-      <h4><b>I am Who I Am!</b></h4>
-      <h6><i>With Passion For Real, Good Food</i></h6>
-      <p>Just me, myself and I, exploring the universe of unknownment. I have a heart of love and an interest on food blog. I want to share my world with you.</p>
-    </div>
-  </div>
-  <hr>
-  
-  <!-- Footer -->
-  <footer class="w3-row-padding w3-padding-32">
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#skills">Skills</a></li>
+                    <li><a href="#projects">Projects</a></li>
+                    <li><a href="#education">Education</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
 
-    <div class="w3-third w3-serif">
-      <h3>POPULAR TAGS</h3>
-      <p>
-        <span class="w3-tag w3-black w3-margin-bottom">Travel</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">New York</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Dinner</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Salmon</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">France</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Drinks</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Ideas</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Flavors</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Cuisine</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Chicken</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Dressing</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Fried</span>
-        <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Fish</span> <span class="w3-tag w3-dark-grey w3-small w3-margin-bottom">Duck</span>
-      </p>
-    </div>
-  </footer>
+            </nav>
 
-<!-- End page content -->
-</div>
+        </div>
+    </header>
 
-<script>
-// Script to open and close sidebar
-function w3_open() {
-  document.getElementById("mySidebar").style.display = "block";
-}
- 
-function w3_close() {
-  document.getElementById("mySidebar").style.display = "none";
-}
-</script>
+
+    <!-- =========================
+         HOME SECTION
+    ========================== -->
+
+    <section id="home" class="hero">
+
+        <div class="container">
+
+            <div class="hero-content">
+
+                <h1>
+                    Hi, I'm <span>Anand Kasaudhan</span>
+                </h1>
+
+                <h2>
+                    Software Developer | Full Stack Developer | DevOps Learner
+                </h2>
+
+                <p>
+                    I am a B.Tech student and aspiring software developer
+                    passionate about building web applications, solving
+                    programming problems and learning cloud and DevOps
+                    technologies.
+                </p>
+
+                <div class="buttons">
+
+                    <a href="#projects" class="btn primary-btn">
+                        View Projects
+                    </a>
+
+                    <a href="#contact" class="btn secondary-btn">
+                        Contact Me
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         ABOUT SECTION
+    ========================== -->
+
+    <section id="about" class="about">
+
+        <div class="container">
+
+            <h2 class="section-title">
+                About Me
+            </h2>
+
+            <p>
+                I am an Electronics and Communication Engineering graduate
+                with a strong interest in software development, full-stack
+                development, data structures and cloud technologies.
+                I enjoy creating practical applications and continuously
+                improving my technical skills through projects and problem
+                solving.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         SKILLS SECTION
+    ========================== -->
+
+    <section id="skills">
+
+        <div class="container">
+
+            <h2 class="section-title">
+                Skills
+            </h2>
+
+            <div class="skills-container">
+
+                <div class="skill">C++</div>
+                <div class="skill">Python</div>
+                <div class="skill">JavaScript</div>
+                <div class="skill">HTML</div>
+                <div class="skill">CSS</div>
+
+                <div class="skill">React.js</div>
+                <div class="skill">Node.js</div>
+                <div class="skill">Express.js</div>
+
+                <div class="skill">MongoDB</div>
+                <div class="skill">MySQL</div>
+
+                <div class="skill">Git</div>
+                <div class="skill">GitHub</div>
+
+                <div class="skill">Docker</div>
+                <div class="skill">Azure</div>
+
+                <div class="skill">SQL</div>
+                <div class="skill">Power BI</div>
+                <div class="skill">Excel</div>
+
+                <div class="skill">Data Structures</div>
+                <div class="skill">Algorithms</div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         PROJECTS SECTION
+    ========================== -->
+
+    <section id="projects">
+
+        <div class="container">
+
+            <h2 class="section-title">
+                Projects
+            </h2>
+
+            <div class="projects">
+
+
+                <!-- Project 1 -->
+
+                <div class="project-card">
+
+                    <h3>Coco Chat</h3>
+
+                    <p>
+                        A full-stack real-time chatting application
+                        allowing users to communicate through a modern
+                        web interface.
+                    </p>
+
+                    <div class="tech">
+                        React.js • Node.js • Express.js • MongoDB • Socket.io
+                    </div>
+
+                </div>
+
+
+                <!-- Project 2 -->
+
+                <div class="project-card">
+
+                    <h3>Dev Junction</h3>
+
+                    <p>
+                        A blockchain-based payment platform integrating
+                        cryptocurrency payments and video communication.
+                    </p>
+
+                    <div class="tech">
+                        MERN • MetaMask • Zego Cloud
+                    </div>
+
+                </div>
+
+
+                <!-- Project 3 -->
+
+                <div class="project-card">
+
+                    <h3>Fleet Manager</h3>
+
+                    <p>
+                        A fleet management application designed to manage
+                        vehicles and provide real-time notifications.
+                    </p>
+
+                    <div class="tech">
+                        React.js • Node.js • MongoDB • Firebase
+                    </div>
+
+                </div>
+
+
+                <!-- Project 4 -->
+
+                <div class="project-card">
+
+                    <h3>AI Lesson Planner</h3>
+
+                    <p>
+                        An AI-powered lesson planning application that
+                        generates structured lesson plans using Google's
+                        Gemini API.
+                    </p>
+
+                    <div class="tech">
+                        React.js • TypeScript • Tailwind CSS • Gemini API
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         EDUCATION SECTION
+    ========================== -->
+
+    <section id="education">
+
+        <div class="container">
+
+            <h2 class="section-title">
+                Education
+            </h2>
+
+            <div class="education-card">
+
+                <h3>
+                    Indian Institute of Information Technology Jabalpur
+                </h3>
+
+                <p>
+                    Bachelor of Technology – Electronics and Communication Engineering
+                </p>
+
+                <p>
+                    2022 – 2026
+                </p>
+
+                <p>
+                    CGPA: 7.5
+                </p>
+
+            </div>
+
+
+            <div class="education-card">
+
+                <h3>
+                    Gramarshi Academy International
+                </h3>
+
+                <p>
+                    CBSE – Class XII
+                </p>
+
+                <p>
+                    Percentage: 92.2%
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         ACHIEVEMENTS
+    ========================== -->
+
+    <section>
+
+        <div class="container">
+
+            <h2 class="section-title">
+                Achievements
+            </h2>
+
+            <div class="achievements">
+
+                <div class="achievement">
+                    Solved 350+ Data Structures and Algorithms problems
+                    on LeetCode.
+                </div>
+
+                <div class="achievement">
+                    Competitive programming rating of 1800+.
+                </div>
+
+                <div class="achievement">
+                    Experience developing full-stack web applications
+                    using the MERN stack.
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         CONTACT SECTION
+    ========================== -->
+
+    <section id="contact">
+
+        <div class="container contact">
+
+            <h2 class="section-title">
+                Contact Me
+            </h2>
+
+            <p>
+                Interested in working together or discussing a project?
+            </p>
+
+            <div class="contact-links">
+
+                <a href="mailto:your-email@example.com">
+                    Email
+                </a>
+
+                <a href="https://github.com/" target="_blank">
+                    GitHub
+                </a>
+
+                <a href="https://www.linkedin.com/" target="_blank">
+                    LinkedIn
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <p>
+            © 2026 Anand Kasaudhan. All Rights Reserved.
+        </p>
+
+    </footer>
 
 </body>
+
 </html>
+```
