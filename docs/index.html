@@ -1,20 +1,12 @@
-```html
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-
-    <!-- Makes the website responsive on mobile devices -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Anand Kasaudhan | Portfolio</title>
+    <title>Tasty Bites | Food Blog</title>
 
     <style>
-        /* =========================
-           GENERAL STYLES
-        ========================== */
-
         * {
             margin: 0;
             padding: 0;
@@ -24,8 +16,8 @@
 
         body {
             font-family: Arial, Helvetica, sans-serif;
-            background: #0f172a;
-            color: #e2e8f0;
+            background: #fffaf3;
+            color: #333;
             line-height: 1.6;
         }
 
@@ -40,30 +32,25 @@
             margin: auto;
         }
 
-
-        /* =========================
-           NAVBAR
-        ========================== */
-
         header {
             position: sticky;
             top: 0;
             z-index: 1000;
-            background: #0f172a;
-            border-bottom: 1px solid #334155;
+            background: #fff;
+            border-bottom: 1px solid #eee;
         }
 
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 0;
+            padding: 18px 0;
         }
 
         .logo {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: bold;
-            color: #38bdf8;
+            color: #e85d04;
         }
 
         .nav-links {
@@ -72,665 +59,460 @@
             gap: 25px;
         }
 
-        .nav-links a {
-            color: #cbd5e1;
-            transition: 0.3s;
-        }
-
         .nav-links a:hover {
-            color: #38bdf8;
+            color: #e85d04;
         }
-
-
-        /* =========================
-           HERO SECTION
-        ========================== */
 
         .hero {
-            min-height: 90vh;
+            min-height: 75vh;
             display: flex;
             align-items: center;
+            background:
+                linear-gradient(90deg, rgba(0,0,0,.72), rgba(0,0,0,.12)),
+                url("https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1600&q=80")
+                center/cover;
+            color: white;
         }
 
         .hero-content {
-            max-width: 750px;
+            max-width: 650px;
+            padding: 60px 0;
         }
 
         .hero h1 {
-            font-size: 55px;
-            margin-bottom: 10px;
-        }
-
-        .hero h1 span {
-            color: #38bdf8;
-        }
-
-        .hero h2 {
-            color: #94a3b8;
-            font-size: 25px;
+            font-size: 54px;
+            line-height: 1.2;
             margin-bottom: 20px;
         }
 
-        .hero p {
-            color: #cbd5e1;
-            font-size: 18px;
-            margin-bottom: 30px;
+        .hero h1 span {
+            color: #ffb703;
         }
 
-        .buttons {
-            display: flex;
-            gap: 15px;
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 28px;
         }
 
         .btn {
             display: inline-block;
-            padding: 12px 25px;
+            padding: 12px 24px;
             border-radius: 6px;
             font-weight: bold;
-            transition: 0.3s;
+            transition: .3s;
         }
 
         .primary-btn {
-            background: #38bdf8;
-            color: #0f172a;
+            background: #e85d04;
+            color: white;
         }
 
         .primary-btn:hover {
-            background: #0ea5e9;
+            background: #c94b00;
         }
-
-        .secondary-btn {
-            border: 1px solid #38bdf8;
-            color: #38bdf8;
-        }
-
-        .secondary-btn:hover {
-            background: #38bdf8;
-            color: #0f172a;
-        }
-
-
-        /* =========================
-           SECTIONS
-        ========================== */
 
         section {
-            padding: 80px 0;
+            padding: 70px 0;
         }
 
         .section-title {
             text-align: center;
-            font-size: 35px;
-            margin-bottom: 50px;
-            color: #38bdf8;
+            font-size: 34px;
+            margin-bottom: 12px;
+            color: #9b3d13;
         }
 
-
-        /* =========================
-           ABOUT
-        ========================== */
+        .section-description {
+            text-align: center;
+            color: #777;
+            margin-bottom: 35px;
+        }
 
         .about p {
             max-width: 800px;
             margin: auto;
             text-align: center;
-            color: #cbd5e1;
-            font-size: 18px;
+            font-size: 17px;
         }
 
-
-        /* =========================
-           SKILLS
-        ========================== */
-
-        .skills-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .skill {
-            background: #1e293b;
-            border: 1px solid #334155;
-            padding: 12px 20px;
-            border-radius: 25px;
-            color: #cbd5e1;
-            transition: 0.3s;
-        }
-
-        .skill:hover {
-            border-color: #38bdf8;
-            transform: translateY(-3px);
-        }
-
-
-        /* =========================
-           PROJECTS
-        ========================== */
-
-        .projects {
+        .categories {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .category {
+            padding: 30px 20px;
+            text-align: center;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px #0000000d;
+            transition: .3s;
+        }
+
+        .category:hover {
+            transform: translateY(-5px);
+        }
+
+        .category .emoji {
+            font-size: 40px;
+        }
+
+        .category h3 {
+            color: #e85d04;
+            margin-top: 10px;
+        }
+
+        .recipes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 25px;
         }
 
-        .project-card {
-            background: #1e293b;
-            padding: 25px;
-            border-radius: 10px;
-            border: 1px solid #334155;
-            transition: 0.3s;
+        .recipe-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px #00000012;
+            transition: .3s;
         }
 
-        .project-card:hover {
+        .recipe-card:hover {
             transform: translateY(-5px);
-            border-color: #38bdf8;
         }
 
-        .project-card h3 {
-            color: #38bdf8;
+        .recipe-card img {
+            width: 100%;
+            height: 210px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .recipe-content {
+            padding: 20px;
+        }
+
+        .recipe-content h3 {
+            color: #9b3d13;
+            margin-bottom: 8px;
+        }
+
+        .recipe-content p {
+            color: #666;
             margin-bottom: 12px;
         }
 
-        .project-card p {
-            color: #cbd5e1;
-            margin-bottom: 15px;
-        }
-
-        .tech {
-            color: #94a3b8;
+        .recipe-meta {
+            color: #e85d04;
             font-size: 14px;
+            margin-bottom: 12px;
         }
 
+        .read-more {
+            color: #e85d04;
+            font-weight: bold;
+        }
 
-        /* =========================
-           EDUCATION
-        ========================== */
+        .newsletter {
+            background: #ffedd8;
+            text-align: center;
+        }
 
-        .education-card {
-            background: #1e293b;
-            padding: 25px;
-            border-left: 4px solid #38bdf8;
+        .newsletter p {
             margin-bottom: 20px;
         }
 
-        .education-card h3 {
-            color: #38bdf8;
+        .newsletter input {
+            padding: 12px;
+            width: min(300px, 100%);
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 5px;
         }
 
-        .education-card p {
-            color: #cbd5e1;
+        .newsletter button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #e85d04;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
         }
-
-
-        /* =========================
-           ACHIEVEMENTS
-        ========================== */
-
-        .achievements {
-            max-width: 800px;
-            margin: auto;
-        }
-
-        .achievement {
-            background: #1e293b;
-            padding: 18px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-        }
-
-
-        /* =========================
-           CONTACT
-        ========================== */
 
         .contact {
             text-align: center;
         }
 
         .contact p {
-            color: #cbd5e1;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .contact-links {
-            margin-top: 25px;
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 25px;
             flex-wrap: wrap;
+            margin-top: 20px;
+            color: #e85d04;
         }
-
-        .contact-links a {
-            color: #38bdf8;
-        }
-
-
-        /* =========================
-           FOOTER
-        ========================== */
 
         footer {
             text-align: center;
             padding: 25px;
-            border-top: 1px solid #334155;
-            color: #94a3b8;
+            background: #2b2118;
+            color: white;
         }
 
-
-        /* =========================
-           MOBILE RESPONSIVENESS
-        ========================== */
-
         @media (max-width: 768px) {
-
             .nav-links {
-                display: none;
+                gap: 12px;
+                font-size: 13px;
+                flex-wrap: wrap;
+                justify-content: flex-end;
             }
 
             .hero h1 {
-                font-size: 40px;
+                font-size: 38px;
             }
 
-            .hero h2 {
-                font-size: 20px;
-            }
-
-            .projects {
+            .categories,
+            .recipes {
                 grid-template-columns: 1fr;
             }
 
-            .buttons {
+            .recipe-card img {
+                height: 240px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav {
+                align-items: flex-start;
+                gap: 12px;
                 flex-direction: column;
-                width: 200px;
+            }
+
+            .nav-links {
+                justify-content: flex-start;
+                gap: 15px;
             }
         }
     </style>
 </head>
 
-
 <body>
 
-    <!-- =========================
-         NAVIGATION BAR
-    ========================== -->
-
+    <!-- Navigation -->
     <header>
         <div class="container">
-
             <nav>
-
-                <div class="logo">
-                    Anand.
-                </div>
+                <div class="logo">Tasty Bites 🍲</div>
 
                 <ul class="nav-links">
                     <li><a href="#home">Home</a></li>
                     <li><a href="#about">About</a></li>
-                    <li><a href="#skills">Skills</a></li>
-                    <li><a href="#projects">Projects</a></li>
-                    <li><a href="#education">Education</a></li>
+                    <li><a href="#categories">Categories</a></li>
+                    <li><a href="#recipes">Recipes</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
-
             </nav>
-
         </div>
     </header>
 
-
-    <!-- =========================
-         HOME SECTION
-    ========================== -->
-
+    <!-- Hero -->
     <section id="home" class="hero">
-
         <div class="container">
-
             <div class="hero-content">
-
-                <h1>
-                    Hiii, I'm <span>Anand Kasaudhan</span>
-                </h1>
-
-                <h2>
-                    Software Developer | Full Stack Developer | DevOps Learner
-                </h2>
+                <h1>Good Food, <span>Good Mood!</span></h1>
 
                 <p>
-                    I am a B.Tech student and aspiring software developer
-                    passionate about building web applications, solving
-                    programming problems and learning cloud and DevOps
-                    technologies.
+                    Discover delicious recipes, explore new flavors,
+                    and bring happiness to your kitchen. From quick
+                    breakfasts to mouthwatering dinners, there's
+                    something here for everyone.
                 </p>
 
-                <div class="buttons">
-
-                    <a href="#projects" class="btn primary-btn">
-                        View Projects
-                    </a>
-
-                    <a href="#contact" class="btn secondary-btn">
-                        Contact Me
-                    </a>
-
-                </div>
-
+                <a href="#recipes" class="btn primary-btn">
+                    Explore Recipes
+                </a>
             </div>
-
         </div>
-
     </section>
 
-
-    <!-- =========================
-         ABOUT SECTION
-    ========================== -->
-
+    <!-- About -->
     <section id="about" class="about">
-
         <div class="container">
-
-            <h2 class="section-title">
-                About Me
-            </h2>
+            <h2 class="section-title">Welcome to Tasty Bites</h2>
 
             <p>
-                I am an Electronics and Communication Engineering graduate
-                with a strong interest in software development, full-stack
-                development, data structures and cloud technologies.
-                I enjoy creating practical applications and continuously
-                improving my technical skills through projects and problem
-                solving.
+                We believe great food brings people together.
+                This blog is a place for easy homemade recipes,
+                traditional Indian dishes, sweet treats, and
+                cooking inspiration. Whether you're a beginner
+                or a food lover, let's make every meal special!
+            </p>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section id="categories">
+        <div class="container">
+            <h2 class="section-title">Explore Categories</h2>
+            <p class="section-description">
+                Find something delicious for every craving.
             </p>
 
-        </div>
+            <div class="categories">
+                <div class="category">
+                    <div class="emoji">🍛</div>
+                    <h3>Indian Food</h3>
+                    <p>Traditional meals packed with flavor.</p>
+                </div>
 
+                <div class="category">
+                    <div class="emoji">🍕</div>
+                    <h3>Fast Food</h3>
+                    <p>Quick bites for your favorite cravings.</p>
+                </div>
+
+                <div class="category">
+                    <div class="emoji">🍰</div>
+                    <h3>Desserts</h3>
+                    <p>Sweet recipes to brighten your day.</p>
+                </div>
+            </div>
+        </div>
     </section>
 
-
-    <!-- =========================
-         SKILLS SECTION
-    ========================== -->
-
-    <section id="skills">
-
+    <!-- Recipes -->
+    <section id="recipes">
         <div class="container">
+            <h2 class="section-title">Popular Recipes</h2>
+            <p class="section-description">
+                A few reader favorites to try at home.
+            </p>
 
-            <h2 class="section-title">
-                Skills
-            </h2>
+            <div class="recipes">
 
-            <div class="skills-container">
+                <article class="recipe-card">
+                    <img
+                        src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=800&q=80"
+                        alt="Indian curry served with rice">
 
-                <div class="skill">C++</div>
-                <div class="skill">Python</div>
-                <div class="skill">JavaScript</div>
-                <div class="skill">HTML</div>
-                <div class="skill">CSS</div>
+                    <div class="recipe-content">
+                        <div class="recipe-meta">🍛 Indian • 30 mins</div>
+                        <h3>Homestyle Indian Curry</h3>
+                        <p>
+                            A comforting, aromatic curry made with
+                            everyday spices and fresh ingredients.
+                        </p>
+                        <a class="read-more"
+                           href="https://www.indianhealthyrecipes.com/"
+                           target="_blank" rel="noopener noreferrer">
+                            Discover recipes →
+                        </a>
+                    </div>
+                </article>
 
-                <div class="skill">React.js</div>
-                <div class="skill">Node.js</div>
-                <div class="skill">Express.js</div>
+                <article class="recipe-card">
+                    <img
+                        src="https://images.unsplash.com/photo-1604382355076-af4b0eb60143?auto=format&fit=crop&w=800&q=80"
+                        alt="Freshly baked pizza">
 
-                <div class="skill">MongoDB</div>
-                <div class="skill">MySQL</div>
+                    <div class="recipe-content">
+                        <div class="recipe-meta">🍕 Snacks • 25 mins</div>
+                        <h3>Cheesy Homemade Pizza</h3>
+                        <p>
+                            A crispy base topped with rich sauce,
+                            melted cheese, and your favorite toppings.
+                        </p>
+                        <a class="read-more"
+                           href="https://www.bbcgoodfood.com/"
+                           target="_blank" rel="noopener noreferrer">
+                            Discover recipes →
+                        </a>
+                    </div>
+                </article>
 
-                <div class="skill">Git</div>
-                <div class="skill">GitHub</div>
+                <article class="recipe-card">
+                    <img
+                        src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80"
+                        alt="Chocolate cake">
 
-                <div class="skill">Docker</div>
-                <div class="skill">Azure</div>
-
-                <div class="skill">SQL</div>
-                <div class="skill">Power BI</div>
-                <div class="skill">Excel</div>
-
-                <div class="skill">Data Structures</div>
-                <div class="skill">Algorithms</div>
+                    <div class="recipe-content">
+                        <div class="recipe-meta">🍰 Dessert • 50 mins</div>
+                        <h3>Chocolate Cake</h3>
+                        <p>
+                            A rich, soft chocolate cake that's perfect
+                            for celebrations or a weekend treat.
+                        </p>
+                        <a class="read-more"
+                           href="https://www.allrecipes.com/"
+                           target="_blank" rel="noopener noreferrer">
+                            Discover recipes →
+                        </a>
+                    </div>
+                </article>
 
             </div>
-
         </div>
-
     </section>
 
-
-    <!-- =========================
-         PROJECTS SECTION
-    ========================== -->
-
-    <section id="projects">
-
+    <!-- Newsletter -->
+    <section class="newsletter">
         <div class="container">
+            <h2 class="section-title">Get More Delicious Ideas!</h2>
 
-            <h2 class="section-title">
-                Projects
-            </h2>
+            <p>
+                Stay inspired with new recipes and cooking tips.
+            </p>
 
-            <div class="projects">
+            <form id="newsletter-form">
+                <input
+                    type="email"
+                    placeholder="Enter your email address"
+                    aria-label="Email address"
+                    required>
 
+                <button type="submit">Subscribe</button>
+            </form>
 
-                <!-- Project 1 -->
-
-                <div class="project-card">
-
-                    <h3>Coco Chat</h3>
-
-                    <p>
-                        A full-stack real-time chatting application
-                        allowing users to communicate through a modern
-                        web interface.
-                    </p>
-
-                    <div class="tech">
-                        React.js • Node.js • Express.js • MongoDB • Socket.io
-                    </div>
-
-                </div>
-
-
-                <!-- Project 2 -->
-
-                <div class="project-card">
-
-                    <h3>Dev Junction</h3>
-
-                    <p>
-                        A blockchain-based payment platform integrating
-                        cryptocurrency payments and video communication.
-                    </p>
-
-                    <div class="tech">
-                        MERN • MetaMask • Zego Cloud
-                    </div>
-
-                </div>
-
-
-                <!-- Project 3 -->
-
-                <div class="project-card">
-
-                    <h3>Fleet Manager</h3>
-
-                    <p>
-                        A fleet management application designed to manage
-                        vehicles and provide real-time notifications.
-                    </p>
-
-                    <div class="tech">
-                        React.js • Node.js • MongoDB • Firebase
-                    </div>
-
-                </div>
-
-
-                <!-- Project 4 -->
-
-                <div class="project-card">
-
-                    <h3>AI Lesson Planner</h3>
-
-                    <p>
-                        An AI-powered lesson planning application that
-                        generates structured lesson plans using Google's
-                        Gemini API.
-                    </p>
-
-                    <div class="tech">
-                        React.js • TypeScript • Tailwind CSS • Gemini API
-                    </div>
-
-                </div>
-
-            </div>
-
+            <p id="newsletter-message" aria-live="polite"></p>
         </div>
-
     </section>
 
-
-    <!-- =========================
-         EDUCATION SECTION
-    ========================== -->
-
-    <section id="education">
-
-        <div class="container">
-
-            <h2 class="section-title">
-                Education
-            </h2>
-
-            <div class="education-card">
-
-                <h3>
-                    Indian Institute of Information Technology Jabalpur
-                </h3>
-
-                <p>
-                    Bachelor of Technology – Electronics and Communication Engineering
-                </p>
-
-                <p>
-                    2022 – 2026
-                </p>
-
-                <p>
-                    CGPA: 7.5
-                </p>
-
-            </div>
-
-
-            <div class="education-card">
-
-                <h3>
-                    Gramarshi Academy International
-                </h3>
-
-                <p>
-                    CBSE – Class XII
-                </p>
-
-                <p>
-                    Percentage: 92.2%
-                </p>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =========================
-         ACHIEVEMENTS
-    ========================== -->
-
-    <section>
-
-        <div class="container">
-
-            <h2 class="section-title">
-                Achievements
-            </h2>
-
-            <div class="achievements">
-
-                <div class="achievement">
-                    Solved 350+ Data Structures and Algorithms problems
-                    on LeetCode.
-                </div>
-
-                <div class="achievement">
-                    Competitive programming rating of 1800+.
-                </div>
-
-                <div class="achievement">
-                    Experience developing full-stack web applications
-                    using the MERN stack.
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =========================
-         CONTACT SECTION
-    ========================== -->
-
+    <!-- Contact -->
     <section id="contact">
-
         <div class="container contact">
+            <h2 class="section-title">Let's Talk Food!</h2>
 
-            <h2 class="section-title">
-                Contact Me
-            </h2>
-
-            <p>
-                Interested in working together or discussing a project?
-            </p>
+            <p>Have a recipe idea or cooking question?</p>
+            <p>We'd love to hear from you.</p>
 
             <div class="contact-links">
-
-                <a href="mailto:your-email@example.com">
-                    Email
-                </a>
-
-                <a href="https://github.com/" target="_blank">
-                    GitHub
-                </a>
-
-                <a href="https://www.linkedin.com/" target="_blank">
-                    LinkedIn
-                </a>
-
+                <a href="mailto:hello@tastybites.example">Email Us</a>
+                <a href="#recipes">Browse Recipes</a>
+                <a href="#home">Back to Top ↑</a>
             </div>
-
         </div>
-
     </section>
 
-
-    <!-- =========================
-         FOOTER
-    ========================== -->
-
+    <!-- Footer -->
     <footer>
-
-        <p>
-            © 2026 Anand Kasaudhan. All Rights Reserved.
-        </p>
-
+        <p>© 2026 Tasty Bites. Made with ❤️ and a love for food.</p>
     </footer>
 
-</body>
+    <script>
+        document
+            .getElementById("newsletter-form")
+            .addEventListener("submit", function (event) {
+                event.preventDefault();
 
+                document.getElementById("newsletter-message").textContent =
+                    "Thanks for your interest! Newsletter signup isn't connected yet.";
+            });
+    </script>
+
+</body>
 </html>
-```
